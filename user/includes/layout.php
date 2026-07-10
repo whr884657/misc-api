@@ -19,10 +19,16 @@ function vs_user_menu_groups()
             'url'   => '/user/index.php',
         ),
         array(
-            'id'    => 'manage',
-            'title' => '管理',
-            'icon'  => 'folder',
-            'url'   => '/user/manage.php',
+            'id'    => 'api-manage',
+            'title' => 'API 管理',
+            'icon'  => 'cloud',
+            'url'   => '/user/api-manage.php',
+        ),
+        array(
+            'id'    => 'tokens',
+            'title' => '令牌管理',
+            'icon'  => 'share',
+            'url'   => '/user/tokens.php',
         ),
         array(
             'id'    => 'points',
@@ -33,7 +39,7 @@ function vs_user_menu_groups()
         array(
             'id'    => 'api-list',
             'title' => '接口列表',
-            'icon'  => 'cloud',
+            'icon'  => 'folder',
             'url'   => '/user/apis.php',
         ),
         array(

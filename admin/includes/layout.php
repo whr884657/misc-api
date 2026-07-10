@@ -60,6 +60,7 @@ function vs_admin_menu_groups()
                 array('id' => 'users', 'title' => '用户管理', 'url' => '/admin/users.php'),
                 array('id' => 'account', 'title' => '账号设置', 'url' => '/admin/account.php'),
                 array('id' => 'settings', 'title' => '系统设置', 'url' => '/admin/settings.php'),
+                array('id' => 'theme', 'title' => '主题设置', 'url' => '/admin/system/theme.php'),
                 array('id' => 'logs', 'title' => '日志查询', 'url' => '/admin/system/logs.php'),
                 array('id' => 'upgrade', 'title' => '系统升级', 'url' => '/admin/upgrade.php'),
                 array('id' => 'about', 'title' => '关于', 'url' => '/admin/about.php'),

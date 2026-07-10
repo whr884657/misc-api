@@ -44,6 +44,7 @@
 .is-active .vs-icon--cloud,
 .is-active .vs-icon--archive,
 .is-active .vs-icon--ai,
+.is-active .vs-icon--share,
 .vs-sidebar__link.is-active .vs-icon,
 .vs-sidebar__group-btn.is-active .vs-icon {
     filter: brightness(0) saturate(100%);
