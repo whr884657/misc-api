@@ -1232,6 +1232,42 @@ select.vs-input {
     margin-top: 2px;
 }
 
+.vs-users-id {
+    font-weight: 500;
+    color: var(--vs-text-secondary);
+    margin-right: 6px;
+}
+
+.vs-users-banned-tag {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #b91c1c;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    vertical-align: middle;
+}
+
+.vs-users-row--banned {
+    opacity: 0.85;
+}
+
+.vs-users-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.vs-user-action-form {
+    display: inline-flex;
+    margin: 0;
+}
+
 .vs-oauth-badge {
     display: inline-flex;
     align-items: center;
@@ -1264,22 +1300,73 @@ select.vs-input {
 .vs-users-mobile {
     display: none;
     flex-direction: column;
-    gap: 12px;
+    gap: 6px;
 }
 
 .vs-user-card {
     border: 1px solid var(--vs-border);
-    border-radius: 12px;
-    padding: 14px;
+    border-radius: 8px;
+    padding: 8px 10px;
     background: var(--vs-white);
-    box-shadow: var(--vs-shadow);
+}
+
+.vs-user-card--banned {
+    opacity: 0.88;
 }
 
 .vs-user-card__head {
     display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.vs-user-card__main {
+    flex: 1;
+    min-width: 0;
+}
+
+.vs-user-card__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.vs-user-card__oauth {
+    flex-shrink: 0;
+    display: inline-flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
+    gap: 4px;
+    margin-top: 1px;
+}
+
+.vs-user-oauth-icon {
+    display: block;
+    width: 18px;
+    height: 18px;
+}
+
+.vs-user-oauth-none {
+    font-size: 11px;
+    color: var(--vs-text-secondary);
+    white-space: nowrap;
+}
+
+.vs-user-card__email {
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.vs-user-card__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--vs-border);
 }
 
 .vs-user-card__title {
@@ -1287,9 +1374,7 @@ select.vs-input {
 }
 
 .vs-user-card__grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
+    display: none;
 }
 
 .vs-user-card__cell {
@@ -1319,54 +1404,29 @@ select.vs-input {
 
     .vs-users-mobile {
         display: flex;
-        gap: 8px;
-    }
-
-    .vs-user-card {
-        padding: 10px 12px;
-        border-radius: 10px;
-        box-shadow: none;
-    }
-
-    .vs-user-card__head {
-        gap: 10px;
-        margin-bottom: 8px;
     }
 
     .vs-users-avatar {
-        width: 32px;
-        height: 32px;
+        width: 28px;
+        height: 28px;
     }
 
     .vs-users-name {
-        font-size: 14px;
+        font-size: 13px;
+        line-height: 1.4;
     }
 
     .vs-users-meta {
         font-size: 11px;
     }
 
-    .vs-user-card__grid {
-        gap: 6px;
-    }
-
-    .vs-user-card__cell {
-        padding: 6px 8px;
-        border-radius: 6px;
-    }
-
-    .vs-user-card__label {
-        font-size: 10px;
-        margin-bottom: 2px;
-    }
-
-    .vs-user-card__value {
+    .vs-users-id {
         font-size: 12px;
     }
 
-    .vs-oauth-badge {
+    .vs-user-card__actions .vs-btn--pill {
+        padding: 4px 12px;
         font-size: 11px;
-        padding: 1px 6px;
     }
 }
 

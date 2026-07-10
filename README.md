@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.3.1-blue" alt="version">
+  <img src="https://img.shields.io/badge/version-1.4.0-blue" alt="version">
   <img src="https://img.shields.io/badge/License-开源-green" alt="license">
   <a href="https://gitee.com/xunjinlu/misc-api"><img src="https://img.shields.io/badge/Gitee-代码仓库-C71D23?logo=gitee" alt="Gitee"></a>
   <img src="https://img.shields.io/badge/PHP-7.4+-777BB4?logo=php&logoColor=white" alt="PHP">
@@ -23,6 +23,7 @@
 - Web 五步安装向导，自动创建数据表与初始配置
 - **双端认证**：管理员后台（安装时创建）+ 用户中心（邮箱验证码注册 + QQ/Gitee OAuth）
 - 分组侧边栏管理后台（控制台、用户管理、系统设置、系统升级、关于）
+- 用户管理：列表查看、OAuth 绑定状态、封禁/解封、删除用户
 - 用户中心：自适应侧边栏 + 顶栏，控制台与账号设置
 - 用户头像：QQ 邮箱自动匹配 / 自定义链接 / 默认头像
 - 用户登录支持 QQ / Gitee 第三方登录（须先注册并绑定）
@@ -194,6 +195,16 @@ location / {
 ---
 
 ## 版本记录
+
+### v1.4.0（2026-07-11）
+
+**类型：** 大版本（用户管理功能增强）
+
+**变更说明：**
+
+- 管理员可封禁/解封/删除用户（复用 `status` 字段，无需数据库迁移）
+- 用户管理移动端卡片紧凑化，OAuth 状态右上角图标展示
+- 删除用户二次确认；封禁账号登录明确提示
 
 ### v1.3.1（2026-07-11）
 

@@ -195,6 +195,35 @@ class UserAuth
     }
 
     /**
+     * 凭据正确但账号已封禁
+     *
+     * @param string $account
+     * @param string $password
+     * @return bool
+     */
+    public static function isBannedAccount($account, $password)
+    {
+        $account = trim((string) $account);
+        if ($account === '') {
+            return false;
+        }
+
+        try {
+            $pdo = Database::connect();
+            $table = Database::table('user');
+            $hash = vs_password_hash($password);
+            $stmt = $pdo->prepare(
+                'SELECT `id` FROM `' . $table . '`
+                 WHERE (`username` = ? OR `email` = ?) AND `password` = ? AND `status` = 0 LIMIT 1'
+            );
+            $stmt->execute(array($account, $account, $hash));
+            return (bool) $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    /**
      * 按用户 ID 登录（OAuth 等场景）
      *
      * @param int $userId

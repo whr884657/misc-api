@@ -44,6 +44,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         ));
     }
 
+    if (UserAuth::isBannedAccount($username, $password)) {
+        vs_auth_json(array('code' => 0, 'msg' => '账号已被封禁，请联系管理员'));
+    }
+
     AuthSecurity::recordLoginFailure($username);
     vs_auth_json(array('code' => 0, 'msg' => '用户名/邮箱或密码错误'));
 }
