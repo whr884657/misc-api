@@ -56,10 +56,10 @@ class AuthSecurity
                 'path'     => '/',
                 'secure'   => $secure,
                 'httponly' => true,
-                'samesite' => 'Strict',
+                'samesite' => 'Lax',
             ));
         } else {
-            session_set_cookie_params(0, '/; samesite=Strict', '', $secure, true);
+            session_set_cookie_params(0, '/; samesite=Lax', '', $secure, true);
         }
 
         ini_set('session.use_strict_mode', '1');

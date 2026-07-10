@@ -1,5 +1,16 @@
 {
     "versions": {
+        "1.4.2": {
+            "title": "misc-api 1.4.2 修复 Gitee OAuth 绑定 state 失效",
+            "date": "2026-07-11",
+            "db_changes": false,
+            "changes": [
+                "修复账号设置 Gitee/QQ 绑定回调「授权状态无效或已过期」：Session Cookie 改为 SameSite=Lax",
+                "OAuth state 改为 HMAC 签名令牌，回调校验不再依赖 Session 存储",
+                "账号绑定回调在会话短暂丢失时信任签名 state 中的 user_id 完成绑定",
+                "绑定流程 OAuth 错误跳转至账号设置页而非登录页"
+            ]
+        },
         "1.4.1": {
             "title": "misc-api 1.4.1 账号设置页布局与按钮样式优化",
             "date": "2026-07-11",

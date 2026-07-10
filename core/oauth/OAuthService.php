@@ -80,8 +80,12 @@ class OAuthService
         $bindUserId = isset($stateData['user_id']) ? (int) $stateData['user_id'] : 0;
 
         if ($intent === 'bind' && $bindUserId > 0) {
-            if (!UserAuth::check() || UserAuth::id() !== $bindUserId) {
-                return array('status' => 'error', 'msg' => '绑定会话无效，请重新登录后再试');
+            if (UserAuth::check() && UserAuth::id() !== $bindUserId) {
+                return array(
+                    'status'   => 'error',
+                    'msg'      => '绑定会话无效，请重新登录后再试',
+                    'redirect' => vs_base_url() . '/user/account.php?oauth_error=' . rawurlencode('绑定会话无效，请重新登录后再试'),
+                );
             }
 
             $currentBindings = self::bindingsForUser($bindUserId);
