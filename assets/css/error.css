@@ -1,0 +1,77 @@
+/**
+ * 文件：assets/css/error.css
+ * 作用：404 等错误页样式
+ */
+
+.vs-error-body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    background: var(--page-bg, #f5f6f8);
+}
+
+.vs-error-page {
+    width: 100%;
+    max-width: 640px;
+    padding: 32px 28px;
+    background: var(--vs-content-bg, #fff);
+    border-radius: 12px;
+    border: 1px solid var(--vs-border, #e8eaed);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+.vs-error-page__code {
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--vs-text-secondary, #6b7280);
+    margin-bottom: 8px;
+}
+
+.vs-error-page__title {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: var(--vs-text, #1f2937);
+}
+
+.vs-error-page__lead {
+    font-size: 14px;
+    color: var(--vs-text-secondary, #6b7280);
+    margin: 0 0 20px;
+    line-height: 1.6;
+}
+
+.vs-error-page__legal {
+    padding: 16px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    margin-bottom: 24px;
+}
+
+.vs-error-page__legal-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #991b1b;
+    margin: 0 0 10px;
+}
+
+.vs-error-page__legal-list {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13px;
+    line-height: 1.65;
+    color: #7f1d1d;
+}
+
+.vs-error-page__legal-list li + li {
+    margin-top: 8px;
+}
+
+.vs-error-page__actions {
+    display: flex;
+    gap: 12px;
+}

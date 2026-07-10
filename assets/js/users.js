@@ -1,9 +1,15 @@
 /**
  * 文件：assets/js/users.js
- * 作用：用户管理页 AJAX 封禁/解封/删除（无整页刷新，避免 POST 重复提交）
+ * 作用：用户管理页 AJAX 操作 + 列表搜索（静态过滤）
  */
 (function () {
     'use strict';
+
+    var searchRoot = document.getElementById('usersSearch');
+    var searchInput = document.getElementById('usersSearchInput');
+    var searchToggle = document.getElementById('usersSearchToggle');
+    var countDesc = document.getElementById('usersCountDesc');
+    var searchEmpty = document.getElementById('usersSearchEmpty');
 
     function createActionBtn(userId, action, label, className, confirmDelete) {
         var btn = document.createElement('button');
@@ -48,6 +54,85 @@
         }
     }
 
+    function getTotalCount() {
+        if (!countDesc) {
+            return 0;
+        }
+        var total = countDesc.getAttribute('data-total');
+        return total ? parseInt(total, 10) : 0;
+    }
+
+    function setTotalCount(count) {
+        if (!countDesc) {
+            return;
+        }
+        countDesc.setAttribute('data-total', String(count));
+    }
+
+    function updateCountDesc(visible) {
+        if (!countDesc) {
+            return;
+        }
+        var total = getTotalCount();
+        if (visible == null || visible === total) {
+            countDesc.textContent = '共 ' + total + ' 位用户';
+            return;
+        }
+        countDesc.textContent = '显示 ' + visible + ' / 共 ' + total + ' 位用户';
+    }
+
+    function getSearchableRows() {
+        return document.querySelectorAll('[data-user-row][data-search]');
+    }
+
+    function applySearch() {
+        if (!searchInput) {
+            return;
+        }
+        var keyword = (searchInput.value || '').trim().toLowerCase();
+        var rows = getSearchableRows();
+        var visible = 0;
+
+        rows.forEach(function (row) {
+            var blob = row.getAttribute('data-search') || '';
+            var match = keyword === '' || blob.indexOf(keyword) !== -1;
+            row.hidden = !match;
+            if (match) {
+                visible += 1;
+            }
+        });
+
+        updateCountDesc(keyword === '' ? null : visible);
+
+        if (searchEmpty) {
+            var hasRows = rows.length > 0;
+            searchEmpty.hidden = !(hasRows && keyword !== '' && visible === 0);
+        }
+    }
+
+    function bindSearch() {
+        if (!searchInput) {
+            return;
+        }
+
+        searchInput.addEventListener('input', function () {
+            applySearch();
+        });
+
+        if (searchToggle && searchRoot) {
+            searchToggle.addEventListener('click', function () {
+                var open = searchRoot.classList.toggle('is-open');
+                searchToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+                searchToggle.setAttribute('aria-label', open ? '收起搜索' : '展开搜索');
+                if (open) {
+                    searchInput.focus();
+                } else if (!searchInput.value) {
+                    searchInput.blur();
+                }
+            });
+        }
+    }
+
     function updateUserRows(userId, action) {
         var rows = document.querySelectorAll('[data-user-row="' + userId + '"]');
         rows.forEach(function (row) {
@@ -77,17 +162,11 @@
     }
 
     function updateCount(delta) {
-        var desc = document.getElementById('usersCountDesc');
-        if (!desc) {
-            return;
-        }
-        var match = desc.textContent.match(/(\d+)/);
-        if (!match) {
-            return;
-        }
-        var count = Math.max(0, parseInt(match[1], 10) + delta);
-        desc.textContent = '共 ' + count + ' 位用户';
-        if (count === 0) {
+        var total = Math.max(0, getTotalCount() + delta);
+        setTotalCount(total);
+        applySearch();
+        if (total === 0 && countDesc) {
+            countDesc.textContent = '共 0 位用户';
             window.location.reload();
         }
     }
@@ -157,4 +236,6 @@
 
         run();
     });
+
+    bindSearch();
 })();

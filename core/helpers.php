@@ -392,3 +392,46 @@ function vs_render_modal_shell()
     echo '<div class="vs-modal__foot" id="vsModalFoot"></div>' . "\n";
     echo '</div></div>' . "\n";
 }
+
+/**
+ * 输出 404 页面并终止（含网络安全法律提示）
+ *
+ * @return void
+ */
+function vs_render_404_page()
+{
+    if (!headers_sent()) {
+        http_response_code(404);
+        AuthSecurity::sendSecurityHeaders();
+    }
+
+    $base = vs_base_url();
+    $siteName = 'misc-api';
+    if (class_exists('InstallChecker') && InstallChecker::isInstalled() && class_exists('SiteContext')) {
+        $siteName = SiteContext::siteName();
+    }
+
+    echo '<!DOCTYPE html>' . "\n";
+    echo '<html lang="zh-CN"><head><meta charset="UTF-8">' . "\n";
+    echo '<meta name="viewport" content="width=device-width, initial-scale=1.0">' . "\n";
+    echo '<title>' . vs_e(vs_page_title('页面不存在', $siteName)) . '</title>' . "\n";
+    echo '<link rel="stylesheet" href="' . vs_e($base) . '/assets/css/common.css?v=' . VS_VERSION . '">' . "\n";
+    echo '<link rel="stylesheet" href="' . vs_e($base) . '/assets/css/error.css?v=' . VS_VERSION . '">' . "\n";
+    echo '</head><body class="vs-body vs-error-body">' . "\n";
+    echo '<main class="vs-error-page">' . "\n";
+    echo '<div class="vs-error-page__code">404</div>' . "\n";
+    echo '<h1 class="vs-error-page__title">页面不存在</h1>' . "\n";
+    echo '<p class="vs-error-page__lead">您访问的地址不存在，或请求方式不符合站点安全策略。</p>' . "\n";
+    echo '<div class="vs-error-page__legal">' . "\n";
+    echo '<h2 class="vs-error-page__legal-title">安全与法律提示</h2>' . "\n";
+    echo '<ul class="vs-error-page__legal-list">' . "\n";
+    echo '<li>请通过本站提供的正常入口访问功能，勿尝试扫描、爆破或篡改未公开接口。</li>' . "\n";
+    echo '<li>根据《中华人民共和国网络安全法》，任何危害网络安全、非法侵入他人网络或干扰网络正常功能的行为，将依法承担法律责任。</li>' . "\n";
+    echo '<li>根据《中华人民共和国刑法》第二百八十五条等规定，非法侵入计算机信息系统、非法获取数据或提供侵入工具，构成犯罪的，依法追究刑事责任。</li>' . "\n";
+    echo '<li>异常抓包、伪造或重放请求、绕过 CSRF/令牌校验等行为，可能被记录并作为安全审计依据。</li>' . "\n";
+    echo '</ul></div>' . "\n";
+    echo '<div class="vs-error-page__actions">' . "\n";
+    echo '<a href="' . vs_e($base) . '/" class="vs-btn vs-btn--primary">返回首页</a>' . "\n";
+    echo '</div></main></body></html>';
+    exit;
+}

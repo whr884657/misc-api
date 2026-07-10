@@ -131,13 +131,40 @@ function vs_users_action_group($userId, $active)
     return $html;
 }
 
+/**
+ * @param array $row
+ * @return string
+ */
+function vs_users_search_blob(array $row)
+{
+    $parts = array(
+        (string) (int) $row['id'],
+        (string) $row['username'],
+        (string) $row['email'],
+    );
+    return strtolower(implode(' ', $parts));
+}
+
 vs_admin_layout_start('用户管理', 'users');
 ?>
 
 <div class="vs-panel">
-    <div class="vs-panel__header">
-        <h2 class="vs-panel__title">用户列表</h2>
-        <p class="vs-panel__desc" id="usersCountDesc">共 <?php echo (int) $userCount; ?> 位用户</p>
+    <div class="vs-panel__header vs-users-list-head">
+        <div class="vs-users-list-head__text">
+            <h2 class="vs-panel__title">用户列表</h2>
+            <p class="vs-panel__desc" id="usersCountDesc" data-total="<?php echo (int) $userCount; ?>">共 <?php echo (int) $userCount; ?> 位用户</p>
+        </div>
+        <div class="vs-users-search" id="usersSearch">
+            <button type="button" class="vs-users-search__toggle" id="usersSearchToggle" aria-label="展开搜索" aria-expanded="false">
+                <i class="vs-icon vs-icon--search" aria-hidden="true"></i>
+            </button>
+            <input type="search" class="vs-users-search__input" id="usersSearchInput"
+                   placeholder="搜索用户名、邮箱或 ID" autocomplete="off" enterkeyhint="search">
+        </div>
+    </div>
+
+    <div id="usersSearchEmpty" class="vs-users-search-empty" hidden>
+        <?php vs_render_notice('info', '', '未找到匹配的用户', array('compact' => true)); ?>
     </div>
 
     <?php if ($userCount === 0): ?>
@@ -162,7 +189,8 @@ vs_admin_layout_start('用户管理', 'users');
                         $active = (int) $row['status'] === 1;
                         $uid = (int) $row['id'];
                         ?>
-                        <tr class="<?php echo $active ? '' : 'vs-users-row--banned'; ?>" data-user-row="<?php echo $uid; ?>">
+                        <tr class="<?php echo $active ? '' : 'vs-users-row--banned'; ?>" data-user-row="<?php echo $uid; ?>"
+                            data-search="<?php echo vs_e(vs_users_search_blob($row)); ?>">
                             <td>
                                 <div class="vs-users-cell-user">
                                     <img src="<?php echo vs_e($avatar); ?>" alt="" class="vs-users-avatar">
@@ -197,7 +225,8 @@ vs_admin_layout_start('用户管理', 'users');
                 $active = (int) $row['status'] === 1;
                 $uid = (int) $row['id'];
                 ?>
-                <article class="vs-user-card<?php echo $active ? '' : ' vs-user-card--banned'; ?>" data-user-row="<?php echo $uid; ?>">
+                <article class="vs-user-card<?php echo $active ? '' : ' vs-user-card--banned'; ?>" data-user-row="<?php echo $uid; ?>"
+                         data-search="<?php echo vs_e(vs_users_search_blob($row)); ?>">
                     <div class="vs-user-card__head">
                         <img src="<?php echo vs_e($avatar); ?>" alt="" class="vs-users-avatar">
                         <div class="vs-user-card__main">

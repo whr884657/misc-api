@@ -1279,6 +1279,66 @@ select.vs-input {
 }
 
 /* ── 用户管理 ── */
+.vs-users-list-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.vs-users-list-head__text {
+    flex: 1;
+    min-width: 0;
+}
+
+.vs-users-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.vs-users-search__toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 1px solid var(--vs-border);
+    border-radius: 8px;
+    background: var(--vs-content-bg);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.vs-users-search__toggle:hover {
+    border-color: var(--vs-primary, #2563eb);
+}
+
+.vs-users-search__input {
+    width: 240px;
+    max-width: 100%;
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid var(--vs-border);
+    border-radius: 8px;
+    font-size: 14px;
+    background: var(--vs-content-bg);
+    color: var(--vs-text);
+}
+
+.vs-users-search__input:focus {
+    outline: none;
+    border-color: var(--vs-primary, #2563eb);
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+}
+
+.vs-users-search-empty {
+    margin-bottom: 16px;
+}
+
 .vs-users-avatar {
     width: 40px;
     height: 40px;
@@ -1472,6 +1532,47 @@ select.vs-input {
 }
 
 @media (max-width: 768px) {
+    .vs-users-list-head {
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .vs-users-list-head__text {
+        flex: 0 1 auto;
+        text-align: right;
+        order: 2;
+    }
+
+    .vs-users-search {
+        order: 1;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    .vs-users-search__toggle {
+        display: inline-flex;
+    }
+
+    .vs-users-search__input {
+        width: 0;
+        min-width: 0;
+        padding: 0;
+        border-color: transparent;
+        opacity: 0;
+        pointer-events: none;
+        transition: width 0.22s ease, opacity 0.18s ease, padding 0.22s ease, border-color 0.18s ease;
+    }
+
+    .vs-users-search.is-open .vs-users-search__input {
+        width: min(52vw, 200px);
+        padding: 0 10px;
+        border-color: var(--vs-border);
+        opacity: 1;
+        pointer-events: auto;
+    }
+
     .vs-users-desktop {
         display: none;
     }

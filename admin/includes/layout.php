@@ -35,6 +35,7 @@ function vs_admin_menu_groups()
             'title'    => '内容运营',
             'icon'     => 'folder',
             'children' => array(
+                array('id' => 'announcements', 'title' => '公告管理', 'url' => '/admin/content/announcements.php'),
                 array('id' => 'articles', 'title' => '文章管理', 'url' => '/admin/content/articles.php'),
                 array('id' => 'comments', 'title' => '评论管理', 'url' => '/admin/content/comments.php'),
                 array('id' => 'links', 'title' => '友情链接', 'url' => '/admin/content/links.php'),

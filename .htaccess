@@ -7,5 +7,8 @@
     RewriteRule ^config/ - [F,L]
 </IfModule>
 
+# 404 错误页
+ErrorDocument 404 /404.php
+
 # 禁止目录浏览
 Options -Indexes
