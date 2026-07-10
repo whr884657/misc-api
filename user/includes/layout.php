@@ -142,6 +142,7 @@ function vs_user_layout_end(array $extraScripts = array())
     echo '</div>' . "\n";
 
     echo '<script>window.VS_BASE_URL = ' . json_encode($vsBase) . ';</script>' . "\n";
+    echo '<script>window.VS_CSRF_TOKEN = ' . json_encode(AuthSecurity::csrfToken()) . ';</script>' . "\n";
     echo '<script src="' . vs_e($vsBase) . '/assets/js/common.js?v=' . VS_VERSION . '"></script>' . "\n";
     echo '<script src="' . vs_e($vsBase) . '/assets/js/theme-picker.js?v=' . VS_VERSION . '"></script>' . "\n";
     echo '<script src="' . vs_e($vsBase) . '/assets/js/admin.js?v=' . VS_VERSION . '"></script>' . "\n";

@@ -1,7 +1,7 @@
 /**
  * 文件：assets/js/settings.js
  * 作用：系统设置页 AJAX 保存与折叠板块
- * @version 1.2.0
+ * @version 1.3.0
  */
 
 (function () {
@@ -21,27 +21,11 @@
         flashEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }
 
-    function parseResponse(res) {
-        return res.text().then(function (text) {
-            var data = window.VS && VS.parseJsonResponse ? VS.parseJsonResponse(text) : null;
-            if (!data) {
-                throw new Error('invalid_json');
-            }
-            return data;
-        });
-    }
-
     function postForm(form) {
-        var body = new FormData(form);
         var submitBtn = form.querySelector('[type="submit"]');
         if (submitBtn) submitBtn.disabled = true;
 
-        return fetch(window.location.href, {
-            method: 'POST',
-            body: body,
-            credentials: 'same-origin'
-        })
-            .then(parseResponse)
+        return window.VS.postForm(form)
             .finally(function () {
                 if (submitBtn) submitBtn.disabled = false;
             });

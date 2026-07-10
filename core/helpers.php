@@ -163,6 +163,29 @@ function vs_redirect($url)
 }
 
 /**
+ * 校验 POST 请求（同源 + CSRF），失败时返回 JSON 错误
+ *
+ * @return void
+ */
+function vs_require_secure_post()
+{
+    AuthSecurity::sendSecurityHeaders();
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        AjaxResponse::error('无效请求', 405);
+    }
+
+    if (!AuthSecurity::validateSameOrigin()) {
+        AjaxResponse::error('请求来源无效，请从本站页面操作', 403);
+    }
+
+    $token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
+    if (!AuthSecurity::validateCsrf($token)) {
+        AjaxResponse::error('请求无效，请刷新页面后重试', 403);
+    }
+}
+
+/**
  * 构建浏览器标题（避免页面名与站点名重复）
  *
  * @param string $pageTitle

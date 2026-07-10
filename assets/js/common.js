@@ -8,7 +8,56 @@
     'use strict';
 
     global.VS = global.VS || {};
-    global.VS.version = '1.4.4';
+    global.VS.version = '1.5.0';
+
+    /**
+     * 为 FormData 自动附加 CSRF（若表单未含 csrf_token）
+     *
+     * @param {FormData} body
+     * @returns {FormData}
+     */
+    global.VS.ensureCsrf = function (body) {
+        if (body && !body.has('csrf_token') && global.VS_CSRF_TOKEN) {
+            body.append('csrf_token', global.VS_CSRF_TOKEN);
+        }
+        return body;
+    };
+
+    /**
+     * 安全 POST（同源 fetch + CSRF + JSON 解析）
+     *
+     * @param {HTMLFormElement|FormData} formOrData
+     * @param {string} [url]
+     * @returns {Promise<object>}
+     */
+    global.VS.postForm = function (formOrData, url) {
+        var body = formOrData instanceof FormData ? formOrData : new FormData(formOrData);
+        global.VS.ensureCsrf(body);
+
+        return fetch(url || window.location.href, {
+            method: 'POST',
+            body: body,
+            credentials: 'same-origin'
+        }).then(function (res) {
+            return res.text().then(function (text) {
+                var data = global.VS.parseJsonResponse(text);
+                if (!data) {
+                    throw new Error('invalid_json');
+                }
+                return data;
+            });
+        });
+    };
+
+    /**
+     * @param {string} message
+     * @param {string} [type] success|error|info
+     */
+    global.VS.showMessage = function (message, type) {
+        if (global.VsToast) {
+            global.VsToast.show(message, type === 'error' ? 'error' : (type === 'info' ? 'info' : 'success'));
+        }
+    };
 
     /**
      * 从可能含 BOM / 杂讯的响应文本中解析 JSON

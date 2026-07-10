@@ -14,6 +14,8 @@ $avatarUrl = $vsAdmin && isset($vsAdmin['avatar_url']) ? trim((string) $vsAdmin[
 $avatarPreview = UserAvatar::resolve($vsAdmin);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    vs_require_secure_post();
+
     $username = trim(isset($_POST['username']) ? $_POST['username'] : '');
     $email = trim(isset($_POST['email']) ? $_POST['email'] : '');
     $avatarUrl = trim(isset($_POST['avatar_url']) ? $_POST['avatar_url'] : '');
@@ -22,25 +24,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $oldPassword = isset($_POST['old_password']) ? $_POST['old_password'] : '';
 
     if ($newPassword !== '' && $newPassword !== $newPassword2) {
-        $error = '两次输入的新密码不一致';
-    } else {
-        $result = Auth::updateAccount(
-            $email,
-            $newPassword !== '' ? $newPassword : null,
-            $newPassword !== '' ? $oldPassword : null,
-            $avatarUrl,
-            $username
-        );
-
-        if ($result === true) {
-            $success = '账号信息已保存';
-            $vsAdmin = Auth::user();
-            $avatarUrl = $vsAdmin && isset($vsAdmin['avatar_url']) ? trim((string) $vsAdmin['avatar_url']) : '';
-            $avatarPreview = UserAvatar::resolve($vsAdmin);
-        } else {
-            $error = $result;
-        }
+        AjaxResponse::error('两次输入的新密码不一致');
     }
+
+    $result = Auth::updateAccount(
+        $email,
+        $newPassword !== '' ? $newPassword : null,
+        $newPassword !== '' ? $oldPassword : null,
+        $avatarUrl,
+        $username
+    );
+
+    if ($result !== true) {
+        AjaxResponse::error($result);
+    }
+
+    $vsAdmin = Auth::user();
+    $avatarPreview = UserAvatar::resolve($vsAdmin);
+    AjaxResponse::success('账号信息已保存', array(
+        'avatar_url' => $vsAdmin && isset($vsAdmin['avatar_url']) ? trim((string) $vsAdmin['avatar_url']) : '',
+        'avatar_preview' => $avatarPreview,
+    ));
 }
 
 vs_admin_layout_start('账号设置', 'account');
@@ -54,7 +58,7 @@ vs_admin_layout_start('账号设置', 'account');
         <div class="vs-alert vs-alert--success"><?php echo vs_e($success); ?></div>
     <?php endif; ?>
 
-    <form method="post" action="" class="vs-form vs-account-form" id="accountForm">
+    <form method="post" action="" class="vs-form vs-account-form" id="accountForm" data-ajax="1">
         <div class="vs-account-form__layout">
             <aside class="vs-account-form__aside">
                 <div class="vs-account-avatar">

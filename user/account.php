@@ -21,23 +21,18 @@ if (isset($_GET['oauth_success']) && trim((string) $_GET['oauth_success']) !== '
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    vs_require_secure_post();
     $action = isset($_POST['action']) ? (string) $_POST['action'] : '';
 
     if ($action === 'oauth_unbind') {
-        $token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
-        if (!AuthSecurity::validateCsrf($token)) {
-            $error = '请求无效，请刷新页面后重试';
-        } else {
-            $provider = isset($_POST['provider']) ? (string) $_POST['provider'] : '';
-            $result = OAuthService::unbindUser((int) $vsUser['id'], $provider);
-            if ($result === true) {
-                $success = '第三方账号已解绑';
-                $oauthBindings = OAuthService::bindingsForUser((int) $vsUser['id']);
-            } else {
-                $error = $result;
-            }
+        $provider = isset($_POST['provider']) ? (string) $_POST['provider'] : '';
+        $result = OAuthService::unbindUser((int) $vsUser['id'], $provider);
+        if ($result !== true) {
+            AjaxResponse::error($result);
         }
-    } else {
+        AjaxResponse::success('第三方账号已解绑', array('provider' => $provider));
+    }
+
     $username = trim(isset($_POST['username']) ? $_POST['username'] : '');
     $email = trim(isset($_POST['email']) ? $_POST['email'] : '');
     $avatarUrl = trim(isset($_POST['avatar_url']) ? $_POST['avatar_url'] : '');
@@ -46,26 +41,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $oldPassword = isset($_POST['old_password']) ? $_POST['old_password'] : '';
 
     if ($newPassword !== '' && $newPassword !== $newPassword2) {
-        $error = '两次输入的新密码不一致';
-    } else {
-        $result = UserAuth::updateAccount(
-            $email,
-            $newPassword !== '' ? $newPassword : null,
-            $newPassword !== '' ? $oldPassword : null,
-            $avatarUrl,
-            $username
-        );
+        AjaxResponse::error('两次输入的新密码不一致');
+    }
 
-        if ($result === true) {
-            $success = '账号信息已保存';
-            $vsUser = UserAuth::user();
-            $avatarUrl = $vsUser && isset($vsUser['avatar_url']) ? trim((string) $vsUser['avatar_url']) : '';
-            $avatarPreview = UserAvatar::resolve($vsUser);
-        } else {
-            $error = $result;
-        }
+    $result = UserAuth::updateAccount(
+        $email,
+        $newPassword !== '' ? $newPassword : null,
+        $newPassword !== '' ? $oldPassword : null,
+        $avatarUrl,
+        $username
+    );
+
+    if ($result !== true) {
+        AjaxResponse::error($result);
     }
-    }
+
+    $vsUser = UserAuth::user();
+    $avatarPreview = UserAvatar::resolve($vsUser);
+    AjaxResponse::success('账号信息已保存', array(
+        'avatar_url' => $vsUser && isset($vsUser['avatar_url']) ? trim((string) $vsUser['avatar_url']) : '',
+        'avatar_preview' => $avatarPreview,
+    ));
 }
 
 vs_user_layout_start('账号设置', 'account');
@@ -80,7 +76,7 @@ vs_user_layout_start('账号设置', 'account');
     <?php endif; ?>
 
     <div class="vs-account-shell">
-        <form method="post" action="" class="vs-form vs-account-form" id="accountForm">
+        <form method="post" action="" class="vs-form vs-account-form" id="accountForm" data-ajax="1">
             <div class="vs-account-form__layout">
                 <aside class="vs-account-form__aside">
                     <div class="vs-account-avatar">
@@ -164,7 +160,7 @@ vs_user_layout_start('账号设置', 'account');
                 </div>
                 <div class="vs-oauth-bind-item__action">
                     <?php if ($oauthBindings['qq']): ?>
-                        <form method="post" action="" class="vs-oauth-unbind-form">
+                        <form method="post" action="" class="vs-oauth-unbind-form" data-ajax="1">
                             <input type="hidden" name="action" value="oauth_unbind">
                             <input type="hidden" name="provider" value="qq">
                             <input type="hidden" name="csrf_token" value="<?php echo vs_e(AuthSecurity::csrfToken()); ?>">
@@ -187,7 +183,7 @@ vs_user_layout_start('账号设置', 'account');
                 </div>
                 <div class="vs-oauth-bind-item__action">
                     <?php if ($oauthBindings['gitee']): ?>
-                        <form method="post" action="" class="vs-oauth-unbind-form">
+                        <form method="post" action="" class="vs-oauth-unbind-form" data-ajax="1">
                             <input type="hidden" name="action" value="oauth_unbind">
                             <input type="hidden" name="provider" value="gitee">
                             <input type="hidden" name="csrf_token" value="<?php echo vs_e(AuthSecurity::csrfToken()); ?>">

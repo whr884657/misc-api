@@ -6,49 +6,45 @@
 
 require_once __DIR__ . '/init.php';
 
-$error = '';
-$success = '';
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
-    if (!AuthSecurity::validateCsrf($token)) {
-        $error = '请求无效，请刷新页面后重试';
-    } else {
-        $action = isset($_POST['action']) ? (string) $_POST['action'] : '';
-        $userId = isset($_POST['user_id']) ? (int) $_POST['user_id'] : 0;
+    vs_require_secure_post();
 
-        if ($userId <= 0) {
-            $error = '无效用户';
-        } elseif ($action === 'ban') {
-            $result = UserManager::setStatus($userId, 0);
-            $success = $result === true ? '用户已封禁' : $result;
-            if ($result !== true) {
-                $error = $result;
-                $success = '';
-            }
-        } elseif ($action === 'unban') {
-            $result = UserManager::setStatus($userId, 1);
-            $success = $result === true ? '用户已解封' : $result;
-            if ($result !== true) {
-                $error = $result;
-                $success = '';
-            }
-        } elseif ($action === 'delete') {
-            $result = UserManager::delete($userId);
-            $success = $result === true ? '用户已删除' : $result;
-            if ($result !== true) {
-                $error = $result;
-                $success = '';
-            }
-        } else {
-            $error = '无效操作';
-        }
+    $action = isset($_POST['action']) ? (string) $_POST['action'] : '';
+    $userId = isset($_POST['user_id']) ? (int) $_POST['user_id'] : 0;
+
+    if ($userId <= 0) {
+        AjaxResponse::error('无效用户');
     }
+
+    if ($action === 'ban') {
+        $result = UserManager::setStatus($userId, 0);
+        if ($result !== true) {
+            AjaxResponse::error($result);
+        }
+        AjaxResponse::success('用户已封禁', array('action' => 'ban', 'user_id' => $userId, 'status' => 0));
+    }
+
+    if ($action === 'unban') {
+        $result = UserManager::setStatus($userId, 1);
+        if ($result !== true) {
+            AjaxResponse::error($result);
+        }
+        AjaxResponse::success('用户已解封', array('action' => 'unban', 'user_id' => $userId, 'status' => 1));
+    }
+
+    if ($action === 'delete') {
+        $result = UserManager::delete($userId);
+        if ($result !== true) {
+            AjaxResponse::error($result);
+        }
+        AjaxResponse::success('用户已删除', array('action' => 'delete', 'user_id' => $userId));
+    }
+
+    AjaxResponse::error('无效操作', 400);
 }
 
 $users = UserManager::all();
 $userCount = count($users);
-$csrfToken = AuthSecurity::csrfToken();
 
 /**
  * @param array $row
@@ -106,19 +102,33 @@ function vs_users_format_time($datetime)
  * @param string $action ban|unban|delete
  * @param string $label
  * @param string $class
- * @param string $csrfToken
  * @param bool   $confirmDelete
  * @return string
  */
-function vs_users_action_button($userId, $action, $label, $class, $csrfToken, $confirmDelete = false)
+function vs_users_action_button($userId, $action, $label, $class, $confirmDelete = false)
 {
     $confirmAttr = $confirmDelete ? ' data-confirm-delete="1"' : '';
-    return '<form method="post" action="" class="vs-user-action-form"' . $confirmAttr . '>'
-        . '<input type="hidden" name="csrf_token" value="' . vs_e($csrfToken) . '">'
-        . '<input type="hidden" name="user_id" value="' . (int) $userId . '">'
-        . '<input type="hidden" name="action" value="' . vs_e($action) . '">'
-        . '<button type="submit" class="vs-btn vs-btn--pill ' . vs_e($class) . '">' . vs_e($label) . '</button>'
-        . '</form>';
+    return '<button type="button" class="vs-btn vs-btn--pill ' . vs_e($class) . ' vs-user-action-btn"'
+        . ' data-user-action="' . vs_e($action) . '" data-user-id="' . (int) $userId . '"' . $confirmAttr . '>'
+        . vs_e($label) . '</button>';
+}
+
+/**
+ * @param int  $userId
+ * @param bool $active
+ * @return string
+ */
+function vs_users_action_group($userId, $active)
+{
+    $html = '<div class="vs-users-actions">';
+    if ($active) {
+        $html .= vs_users_action_button($userId, 'ban', '封禁', 'vs-btn--pill-danger');
+    } else {
+        $html .= vs_users_action_button($userId, 'unban', '解封', 'vs-btn--pill-primary');
+    }
+    $html .= vs_users_action_button($userId, 'delete', '删除', 'vs-btn--pill-danger', true);
+    $html .= '</div>';
+    return $html;
 }
 
 vs_admin_layout_start('用户管理', 'users');
@@ -127,15 +137,8 @@ vs_admin_layout_start('用户管理', 'users');
 <div class="vs-panel">
     <div class="vs-panel__header">
         <h2 class="vs-panel__title">用户列表</h2>
-        <p class="vs-panel__desc">共 <?php echo (int) $userCount; ?> 位用户</p>
+        <p class="vs-panel__desc" id="usersCountDesc">共 <?php echo (int) $userCount; ?> 位用户</p>
     </div>
-
-    <?php if ($error): ?>
-        <div class="vs-alert vs-alert--error"><?php echo vs_e($error); ?></div>
-    <?php endif; ?>
-    <?php if ($success): ?>
-        <div class="vs-alert vs-alert--success"><?php echo vs_e($success); ?></div>
-    <?php endif; ?>
 
     <?php if ($userCount === 0): ?>
         <?php vs_render_notice('info', '', '暂无注册用户', array('compact' => true)); ?>
@@ -159,7 +162,7 @@ vs_admin_layout_start('用户管理', 'users');
                         $active = (int) $row['status'] === 1;
                         $uid = (int) $row['id'];
                         ?>
-                        <tr class="<?php echo $active ? '' : 'vs-users-row--banned'; ?>">
+                        <tr class="<?php echo $active ? '' : 'vs-users-row--banned'; ?>" data-user-row="<?php echo $uid; ?>">
                             <td>
                                 <div class="vs-users-cell-user">
                                     <img src="<?php echo vs_e($avatar); ?>" alt="" class="vs-users-avatar">
@@ -179,14 +182,7 @@ vs_admin_layout_start('用户管理', 'users');
                             <td><?php echo vs_e($row['created_at']); ?></td>
                             <td><?php echo vs_e(vs_users_format_time(isset($row['last_login_at']) ? $row['last_login_at'] : null)); ?></td>
                             <td>
-                                <div class="vs-users-actions">
-                                    <?php if ($active): ?>
-                                        <?php echo vs_users_action_button($uid, 'ban', '封禁', 'vs-btn--pill-danger', $csrfToken); ?>
-                                    <?php else: ?>
-                                        <?php echo vs_users_action_button($uid, 'unban', '解封', 'vs-btn--pill-primary', $csrfToken); ?>
-                                    <?php endif; ?>
-                                    <?php echo vs_users_action_button($uid, 'delete', '删除', 'vs-btn--pill-danger', $csrfToken, true); ?>
-                                </div>
+                                <?php echo vs_users_action_group($uid, $active); ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -201,7 +197,7 @@ vs_admin_layout_start('用户管理', 'users');
                 $active = (int) $row['status'] === 1;
                 $uid = (int) $row['id'];
                 ?>
-                <article class="vs-user-card<?php echo $active ? '' : ' vs-user-card--banned'; ?>">
+                <article class="vs-user-card<?php echo $active ? '' : ' vs-user-card--banned'; ?>" data-user-row="<?php echo $uid; ?>">
                     <div class="vs-user-card__head">
                         <img src="<?php echo vs_e($avatar); ?>" alt="" class="vs-users-avatar">
                         <div class="vs-user-card__main">
@@ -222,11 +218,11 @@ vs_admin_layout_start('用户管理', 'users');
                     </div>
                     <div class="vs-user-card__actions">
                         <?php if ($active): ?>
-                            <?php echo vs_users_action_button($uid, 'ban', '封禁', 'vs-btn--pill-danger', $csrfToken); ?>
+                            <?php echo vs_users_action_button($uid, 'ban', '封禁', 'vs-btn--pill-danger'); ?>
                         <?php else: ?>
-                            <?php echo vs_users_action_button($uid, 'unban', '解封', 'vs-btn--pill-primary', $csrfToken); ?>
+                            <?php echo vs_users_action_button($uid, 'unban', '解封', 'vs-btn--pill-primary'); ?>
                         <?php endif; ?>
-                        <?php echo vs_users_action_button($uid, 'delete', '删除', 'vs-btn--pill-danger', $csrfToken, true); ?>
+                        <?php echo vs_users_action_button($uid, 'delete', '删除', 'vs-btn--pill-danger', true); ?>
                     </div>
                 </article>
             <?php endforeach; ?>

@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.4.4-blue" alt="version">
+  <img src="https://img.shields.io/badge/version-1.5.0-blue" alt="version">
   <img src="https://img.shields.io/badge/License-开源-green" alt="license">
   <a href="https://gitee.com/xunjinlu/misc-api"><img src="https://img.shields.io/badge/Gitee-代码仓库-C71D23?logo=gitee" alt="Gitee"></a>
   <img src="https://img.shields.io/badge/PHP-7.4+-777BB4?logo=php&logoColor=white" alt="PHP">
@@ -23,7 +23,7 @@
 - Web 五步安装向导，自动创建数据表与初始配置
 - **双端认证**：管理员后台（安装时创建）+ 用户中心（邮箱验证码注册 + QQ/Gitee OAuth）
 - 分组侧边栏管理后台（控制台、用户管理、系统设置、系统升级、关于）
-- 用户管理：列表查看、OAuth 绑定状态、封禁/解封、删除用户
+- 用户管理：列表查看、OAuth 绑定状态、封禁/解封/删除（AJAX 无整页刷新）
 - 用户中心：自适应侧边栏 + 顶栏，控制台与账号设置
 - 用户头像：QQ 邮箱自动匹配 / 自定义链接 / 默认头像
 - 用户登录支持 QQ / Gitee 第三方登录（须先注册并绑定）
@@ -195,6 +195,16 @@ location / {
 ---
 
 ## 版本记录
+
+### v1.5.0（2026-07-11）
+
+**类型：** 大版本（表单 POST 安全与 AJAX 无刷新）
+
+**变更说明：**
+
+- 修复用户管理封禁/删除后浏览器刷新「重新发送表单」：AJAX 局部更新
+- 用户/管理员账号设置、OAuth 解绑改为 AJAX；系统设置统一 CSRF 校验
+- 新增 `VS.postForm()` 与《请求与表单规范.md》（本地维护）
 
 ### v1.4.4（2026-07-11）
 

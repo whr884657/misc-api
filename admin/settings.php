@@ -9,6 +9,7 @@
 require_once __DIR__ . '/init.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    vs_require_secure_post();
     $action = isset($_POST['action']) ? $_POST['action'] : '';
 
     if ($action === 'save_site') {
