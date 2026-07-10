@@ -10,7 +10,6 @@ require_once __DIR__ . '/init.php';
 
 $localVersion = VS_VERSION;
 $updateHistory = UpdateLog::payloadForApi();
-$updateLogSource = UpdateLog::getSource();
 
 vs_admin_layout_start('系统升级', 'upgrade');
 ?>
@@ -33,17 +32,23 @@ vs_admin_layout_start('系统升级', 'upgrade');
         <button type="button" class="vs-btn vs-btn--default" id="upgradeApplyBtn">安装更新</button>
     </div>
 
-    <p class="vs-form-tip vs-form-tip--block">更新前请备份数据库与网站文件。点击「安装更新」后将进行二次备份确认。</p>
+    <?php
+    vs_render_notice(
+        'warning',
+        '更新前请注意',
+        '<ul><li>请先完整备份数据库与网站文件</li><li>点击「安装更新」后将弹出二次确认</li><li>建议在业务低峰期执行更新</li></ul>',
+        array('allow_html' => true)
+    );
+    ?>
 </div>
 
 <div class="vs-panel vs-panel--spaced vs-upgrade-log-panel">
     <div class="vs-panel__header">
         <h2 class="vs-panel__title">更新记录</h2>
-        <p class="vs-panel__desc">各版本更新说明（优先从云端读取 update-log.json<?php if ($updateLogSource === 'local'): ?>，当前为本地回退<?php endif; ?>）</p>
     </div>
 
     <?php if (count($updateHistory) === 0): ?>
-        <p class="vs-form-tip">暂无更新记录</p>
+        <?php vs_render_notice('info', '', '暂无更新记录', array('compact' => true)); ?>
     <?php else: ?>
         <div class="vs-upgrade-log">
             <?php foreach ($updateHistory as $row): ?>

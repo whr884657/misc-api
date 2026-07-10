@@ -61,7 +61,7 @@ vs_user_layout_start('账号设置', 'account');
                     <label class="vs-label vs-account-avatar__label">头像链接</label>
                     <input type="url" name="avatar_url" id="avatarUrlInput" class="vs-input"
                            value="<?php echo vs_e($avatarUrl); ?>" placeholder="https://example.com/avatar.jpg">
-                    <p class="vs-form-tip">输入图片 URL，留空则使用 QQ 邮箱头像或默认头像</p>
+                    <?php vs_render_notice('tip', '', '输入图片 URL，留空则使用 QQ 邮箱头像或默认头像', array('field' => true, 'compact' => true)); ?>
                 </div>
             </aside>
 
@@ -80,14 +80,14 @@ vs_user_layout_start('账号设置', 'account');
                         <div class="vs-form-row__field">
                             <input type="email" name="email" id="accountEmail" class="vs-input" required
                                    value="<?php echo vs_e($vsUser ? $vsUser['email'] : ''); ?>" placeholder="user@example.com">
-                            <p class="vs-form-tip">用于找回密码；QQ 邮箱可自动匹配 QQ 头像</p>
+                            <?php vs_render_notice('tip', '', '用于找回密码；QQ 邮箱可自动匹配 QQ 头像', array('field' => true, 'compact' => true)); ?>
                         </div>
                     </div>
                 </div>
 
                 <div class="vs-form-section">
                     <h3 class="vs-form-section__title">修改密码</h3>
-                    <p class="vs-form-tip vs-form-tip--block">如不需要修改密码，以下三项留空即可</p>
+                    <?php vs_render_notice('info', '', '如不需要修改密码，以下三项留空即可', array('compact' => true)); ?>
                     <div class="vs-form-row vs-form-row--account">
                         <label class="vs-label" for="accountOldPassword">当前密码</label>
                         <div class="vs-form-row__field">

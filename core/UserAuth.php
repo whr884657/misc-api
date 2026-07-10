@@ -193,6 +193,10 @@ class UserAuth
         if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return '邮箱格式不正确';
         }
+        $suffixMsg = RegisterPolicy::validateEmailSuffix($email);
+        if ($suffixMsg !== null) {
+            return $suffixMsg;
+        }
         if (strlen($password) < 6) {
             return '密码至少 6 位';
         }

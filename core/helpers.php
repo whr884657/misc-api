@@ -18,6 +18,50 @@ function vs_e($value)
 }
 
 /**
+ * 渲染统一界面提示块（info / warning / tip / success / danger）
+ *
+ * @param string $type
+ * @param string $title
+ * @param string $body
+ * @param array  $options allow_html, compact, field
+ * @return void
+ */
+function vs_render_notice($type, $title, $body, array $options = array())
+{
+    $allowed = array('info', 'warning', 'tip', 'success', 'danger');
+    $type = in_array($type, $allowed, true) ? $type : 'info';
+
+    $icons = array(
+        'info'    => 'i',
+        'warning' => '!',
+        'tip'     => '*',
+        'success' => '✓',
+        'danger'  => '×',
+    );
+
+    $classes = array('vs-notice', 'vs-notice--' . $type);
+    if (!empty($options['compact'])) {
+        $classes[] = 'vs-notice--compact';
+    }
+    if (!empty($options['field'])) {
+        $classes[] = 'vs-notice--field';
+    }
+
+    $bodyHtml = !empty($options['allow_html']) ? $body : vs_e($body);
+
+    echo '<div class="' . vs_e(implode(' ', $classes)) . '" role="note">' . "\n";
+    echo '<span class="vs-notice__icon" aria-hidden="true">' . vs_e($icons[$type]) . '</span>' . "\n";
+    echo '<div class="vs-notice__content">' . "\n";
+    if (trim($title) !== '') {
+        echo '<p class="vs-notice__title">' . vs_e($title) . '</p>' . "\n";
+    }
+    if (trim(strip_tags($bodyHtml)) !== '') {
+        echo '<div class="vs-notice__text">' . $bodyHtml . '</div>' . "\n";
+    }
+    echo '</div></div>' . "\n";
+}
+
+/**
  * 渲染系统版本展示（有新版本时显示箭头与可点击的新版本号）
  *
  * @param array|null $updateCheck Updater::checkForUpdate() 结果

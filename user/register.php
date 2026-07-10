@@ -43,6 +43,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             vs_auth_json(array('code' => 0, 'msg' => '请输入有效的邮箱地址'));
         }
 
+        $suffixMsg = RegisterPolicy::validateEmailSuffix($email);
+        if ($suffixMsg !== null) {
+            vs_auth_json(array('code' => 0, 'msg' => $suffixMsg));
+        }
+
         $dupMsg = UserAuth::checkRegisterDuplicate($username, $email);
         if ($dupMsg !== null) {
             vs_auth_json(array('code' => 0, 'msg' => $dupMsg));
@@ -105,6 +110,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             vs_auth_json(array('code' => 0, 'msg' => '两次输入的密码不一致'));
         }
 
+        $suffixMsg = RegisterPolicy::validateEmailSuffix($email);
+        if ($suffixMsg !== null) {
+            vs_auth_json(array('code' => 0, 'msg' => $suffixMsg));
+        }
+
         $savedUsername = isset($_SESSION['user_reg_username']) ? (string) $_SESSION['user_reg_username'] : '';
         $savedEmail = isset($_SESSION['user_reg_email']) ? (string) $_SESSION['user_reg_email'] : '';
         $savedCode = isset($_SESSION['user_reg_code']) ? (string) $_SESSION['user_reg_code'] : '';
@@ -157,9 +167,7 @@ vs_auth_head('用户注册');
             <div id="formMessage" class="form-message" role="alert" hidden></div>
 
             <?php if (!$mailEnabled): ?>
-                <div class="form-message form-message--error" style="display:block;">
-                    <?php echo vs_e($mailDisabledMsg); ?>
-                </div>
+                <?php vs_render_notice('warning', '暂无法注册', $mailDisabledMsg); ?>
             <?php endif; ?>
 
             <form id="registerForm" method="post" action="" novalidate>

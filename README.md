@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.1.1-blue" alt="version">
+  <img src="https://img.shields.io/badge/version-1.2.0-blue" alt="version">
   <img src="https://img.shields.io/badge/License-开源-green" alt="license">
   <a href="https://gitee.com/xunjinlu/misc-api"><img src="https://img.shields.io/badge/Gitee-代码仓库-C71D23?logo=gitee" alt="Gitee"></a>
   <img src="https://img.shields.io/badge/PHP-7.4+-777BB4?logo=php&logoColor=white" alt="PHP">
@@ -16,7 +16,7 @@
 
 ## 项目简介
 
-**misc-api** 是一套可自部署的轻量级 Web 管理系统：安装后在浏览器中管理站点信息、管理员与用户账号、域名绑定与邮件发信，并支持从**云端**检测与安装系统更新。
+**misc-api** 是一套可自部署的轻量级 Web 管理系统：安装后在浏览器中管理站点信息、管理员与用户账号、注册策略与邮件发信，并支持从**云端**检测与安装系统更新。
 
 **主要能力：**
 
@@ -26,7 +26,7 @@
 - 用户中心：自适应侧边栏 + 顶栏，控制台与账号设置
 - 用户头像：QQ 邮箱自动匹配 / 自定义链接 / 默认头像
 - 管理员认证：登录、忘记密码（邮箱验证码）、CSRF 与登录频率限制
-- 站点信息、多域名绑定、SMTP 邮箱发信
+- 站点信息、注册邮箱后缀白名单、SMTP 邮箱发信
 - **云端在线更新**：后台检测新版本、分步下载安装、可选数据库结构迁移
 - 角色动画登录页、主题切换、统一弹窗与 Toast 提示
 - 简洁白色后台主题，纯 CSS 图标，适配电脑端与手机端
@@ -65,7 +65,7 @@
 | 管理员忘记密码 | `/admin/forgot.php` | 邮箱验证码重置（需配置 SMTP） |
 | 管理控制台 | `/admin/index.php` | 后台首页，展示站点与版本信息 |
 | 账号设置 | `/admin/account.php` | 修改用户名、邮箱、头像、密码 |
-| 系统设置 | `/admin/settings.php` | 站点信息、域名绑定、邮箱发信配置 |
+| 系统设置 | `/admin/settings.php` | 站点信息、用户注册策略、邮箱发信配置 |
 | 系统升级 | `/admin/upgrade.php` | 手动检测更新、安装更新、查看更新记录 |
 | 关于 | `/admin/about.php` | 系统与环境信息 |
 | 更新 API | `/admin/update.php` | 在线更新接口（版本检测 / 分步更新） |
@@ -191,6 +191,17 @@ location / {
 
 ## 版本记录
 
+### v1.2.0（2026-07-11）
+
+**类型：** 次大版本（修复 + UI + 注册策略 + 架构简化）
+
+**变更说明：**
+
+- 修复系统升级页更新记录无法显示
+- 统一界面提示组件（`vs-notice`），新增《界面提示规范.md》
+- 注册邮箱后缀白名单（JSON 配置）
+- 移除多域名/子域名绑定功能
+
 ### v1.1.1（2026-07-11）
 
 **类型：** 小版本（用户后台 UI 与账号能力）
@@ -220,7 +231,7 @@ location / {
 
 - misc-api 初始版本发布
 - 管理员认证与安全防护
-- 系统设置（站点信息、域名绑定、邮箱发信）
+- 系统设置（站点信息、邮箱发信）
 - 在线更新机制
 - 安装向导（五步 Web 安装）
 - 响应式后台管理界面

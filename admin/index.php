@@ -21,10 +21,15 @@ vs_admin_layout_start('控制台', 'dashboard');
     </div>
 
     <?php if (!$mailEnabled): ?>
-        <div class="vs-alert vs-alert--warning">
-            邮箱发信尚未配置，忘记密码功能不可用。
-            <a href="<?php echo vs_e($vsBase); ?>/admin/settings.php">前往系统设置</a>
-        </div>
+        <?php
+        $settingsUrl = vs_e($vsBase) . '/admin/settings.php';
+        vs_render_notice(
+            'warning',
+            '邮箱发信尚未配置',
+            '忘记密码功能将不可用。<a href="' . $settingsUrl . '" class="vs-notice__link">前往系统设置</a>',
+            array('allow_html' => true)
+        );
+        ?>
     <?php endif; ?>
 
     <div class="vs-stat-grid">

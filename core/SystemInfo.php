@@ -37,10 +37,6 @@ class SystemInfo
             } catch (Exception $e) {
                 $info[] = self::item('MySQL 版本', '连接失败');
             }
-
-            $primaryDomain = Config::get('primary_domain', '') ?: '未设置（使用系统默认信息）';
-            $info[] = self::item('主绑定域名', $primaryDomain);
-            $info[] = self::item('绑定子域名数', (string) count(Domain::all()));
         }
 
         return $info;

@@ -1,91 +1,12 @@
 <?php
 /**
  * 文件：admin/settings.php
- * 作用：misc-api 后台系统设置（站点信息、域名绑定、邮箱发信）
+ * 作用：misc-api 后台系统设置（站点信息、用户注册、邮箱发信）
  *
  * 说明：系统版本以 core/version.php 中 VS_VERSION 为准。
  */
 
 require_once __DIR__ . '/init.php';
-
-/**
- * 渲染绑定域名卡片列表
- *
- * @param array $domains
- * @return void
- */
-function vs_settings_render_domain_list(array $domains)
-{
-    echo '<div class="vs-domain-list" id="domainsList">' . "\n";
-    foreach ($domains as $row) {
-        $icp = trim((string) $row['icp_number']);
-        $gongan = trim((string) $row['gongan_number']);
-        echo '<article class="vs-domain-card" data-domain-id="' . (int) $row['id'] . '">' . "\n";
-        echo '<div class="vs-domain-card__grid">' . "\n";
-        vs_settings_domain_cell('域名', $row['domain']);
-        vs_settings_domain_cell('站点名称', $row['site_name']);
-        vs_settings_domain_cell('ICP 备案号', $icp !== '' ? $icp : '未设置');
-        vs_settings_domain_cell('公安备案号', $gongan !== '' ? $gongan : '未设置');
-        echo '</div>' . "\n";
-        echo '<div class="vs-domain-card__actions">' . "\n";
-        echo '<a href="?edit_domain=' . (int) $row['id'] . '" class="vs-btn vs-btn--pill vs-btn--pill-primary">编辑</a>' . "\n";
-        echo '<form method="post" class="vs-domain-delete-form" data-ajax="1">' . "\n";
-        echo '<input type="hidden" name="action" value="delete_domain">' . "\n";
-        echo '<input type="hidden" name="domain_id" value="' . (int) $row['id'] . '">' . "\n";
-        echo '<button type="submit" class="vs-btn vs-btn--pill vs-btn--pill-danger">删除</button>' . "\n";
-        echo '</form></div></article>' . "\n";
-    }
-    echo '</div>' . "\n";
-}
-
-/**
- * 域名卡片信息格
- *
- * @param string $label
- * @param string $value
- * @return void
- */
-function vs_settings_domain_cell($label, $value)
-{
-    echo '<div class="vs-domain-card__cell">' . "\n";
-    echo '<span class="vs-domain-card__label">' . vs_e($label) . '</span>' . "\n";
-    echo '<span class="vs-domain-card__value">' . vs_e($value) . '</span>' . "\n";
-    echo '</div>' . "\n";
-}
-
-/**
- * 域名列表供前端刷新表格
- *
- * @param array $domains
- * @return array
- */
-function vs_settings_domains_payload(array $domains)
-{
-    $list = array();
-    foreach ($domains as $row) {
-        $list[] = array(
-            'id'            => (int) $row['id'],
-            'domain'        => $row['domain'],
-            'site_name'     => $row['site_name'],
-            'icp_number'    => $row['icp_number'],
-            'gongan_number' => $row['gongan_number'],
-        );
-    }
-    return $list;
-}
-
-$domains = Domain::all();
-$editId = isset($_GET['edit_domain']) ? (int) $_GET['edit_domain'] : 0;
-$editDomain = null;
-
-if ($editId > 0) {
-    foreach ($domains as $row) {
-        if ((int) $row['id'] === $editId) {
-            $editDomain = $row;
-            break;
-        }
-    }
-}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = isset($_POST['action']) ? $_POST['action'] : '';
@@ -98,59 +19,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'site_keywords'    => trim(isset($_POST['site_keywords']) ? $_POST['site_keywords'] : ''),
                 'site_favicon'     => trim(isset($_POST['site_favicon']) ? $_POST['site_favicon'] : ''),
                 'site_logo'        => trim(isset($_POST['site_logo']) ? $_POST['site_logo'] : ''),
-                'primary_domain'   => Domain::normalizeHost(isset($_POST['primary_domain']) ? $_POST['primary_domain'] : ''),
                 'site_icp'         => trim(isset($_POST['site_icp']) ? $_POST['site_icp'] : ''),
                 'site_gongan'      => trim(isset($_POST['site_gongan']) ? $_POST['site_gongan'] : ''),
             ));
+            SiteContext::clearCache();
             AjaxResponse::success('站点设置已保存');
         } catch (Exception $e) {
             AjaxResponse::error($e->getMessage());
         }
     }
 
-    if ($action === 'add_domain') {
+    if ($action === 'save_register') {
         try {
-            Domain::create(array(
-                'domain'         => isset($_POST['domain']) ? $_POST['domain'] : '',
-                'site_name'      => isset($_POST['domain_site_name']) ? $_POST['domain_site_name'] : '',
-                'icp_number'     => isset($_POST['domain_icp']) ? $_POST['domain_icp'] : '',
-                'gongan_number'  => isset($_POST['domain_gongan']) ? $_POST['domain_gongan'] : '',
-            ));
-            AjaxResponse::success('绑定域名已添加', array(
-                'domains' => vs_settings_domains_payload(Domain::all()),
-            ));
+            $input = isset($_POST['register_email_suffixes']) ? $_POST['register_email_suffixes'] : '';
+            $suffixes = RegisterPolicy::parseSuffixInput($input);
+            RegisterPolicy::saveEmailSuffixes($suffixes);
+            AjaxResponse::success('注册设置已保存');
         } catch (Exception $e) {
-            AjaxResponse::error($e->getMessage());
-        }
-    }
-
-    if ($action === 'update_domain') {
-        $id = (int) (isset($_POST['domain_id']) ? $_POST['domain_id'] : 0);
-        try {
-            Domain::update($id, array(
-                'domain'         => isset($_POST['domain']) ? $_POST['domain'] : '',
-                'site_name'      => isset($_POST['domain_site_name']) ? $_POST['domain_site_name'] : '',
-                'icp_number'     => isset($_POST['domain_icp']) ? $_POST['domain_icp'] : '',
-                'gongan_number'  => isset($_POST['domain_gongan']) ? $_POST['domain_gongan'] : '',
-            ));
-            AjaxResponse::success('绑定域名已更新', array(
-                'domains' => vs_settings_domains_payload(Domain::all()),
-                'clear_edit' => true,
-            ));
-        } catch (Exception $e) {
-            AjaxResponse::error($e->getMessage());
-        }
-    }
-
-    if ($action === 'delete_domain') {
-        $id = (int) (isset($_POST['domain_id']) ? $_POST['domain_id'] : 0);
-        try {
-            Domain::delete($id);
-            AjaxResponse::success('绑定域名已删除', array(
-                'domains' => vs_settings_domains_payload(Domain::all()),
-            ));
-        } catch (Exception $e) {
-            AjaxResponse::error($e->getMessage());
+            AjaxResponse::error('保存失败：' . $e->getMessage());
         }
     }
 
@@ -195,6 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 Config::clearCache();
 $vsCfg = Config::all();
+$registerSuffixes = RegisterPolicy::formatSuffixInput(RegisterPolicy::getPolicy()['email_suffixes']);
 
 vs_admin_layout_start('系统设置', 'settings');
 ?>
@@ -204,18 +91,12 @@ vs_admin_layout_start('系统设置', 'settings');
 <?php
 vs_admin_accordion_start(
     'settings-site',
-    '主域名与站点信息',
-    '主域名使用以下系统信息；未匹配到绑定子域名时也使用此信息'
+    '站点信息',
+    '配置系统名称、图标、描述与备案信息'
 );
 ?>
     <form method="post" action="" class="vs-form" id="siteForm" data-ajax="1">
         <input type="hidden" name="action" value="save_site">
-        <div class="vs-form-row">
-            <label class="vs-label">主绑定域名</label>
-            <input type="text" name="primary_domain" class="vs-input"
-                   value="<?php echo vs_e(Config::get('primary_domain', '')); ?>"
-                   placeholder="例如 www.example.com">
-        </div>
         <div class="vs-form-row">
             <label class="vs-label">系统名称</label>
             <input type="text" name="site_name" class="vs-input" required maxlength="50"
@@ -227,14 +108,14 @@ vs_admin_accordion_start(
                 <input type="text" name="site_favicon" class="vs-input"
                        value="<?php echo vs_e(Config::get('site_favicon', '')); ?>"
                        placeholder="/assets/img/favicon.ico 或 https://...">
-                <p class="vs-form-tip">浏览器标签页小图标</p>
+                <?php vs_render_notice('tip', '', '浏览器标签页小图标，支持相对路径或完整 URL', array('field' => true, 'compact' => true)); ?>
             </div>
             <div class="vs-form-row">
                 <label class="vs-label">站点 Logo</label>
                 <input type="text" name="site_logo" class="vs-input"
                        value="<?php echo vs_e(Config::get('site_logo', '')); ?>"
                        placeholder="/assets/img/logo.png 或 https://...">
-                <p class="vs-form-tip">前台页眉、后台侧栏展示的站点图标</p>
+                <?php vs_render_notice('tip', '', '用于前台页眉与后台侧栏展示', array('field' => true, 'compact' => true)); ?>
             </div>
         </div>
         <div class="vs-form-row">
@@ -248,13 +129,13 @@ vs_admin_accordion_start(
         </div>
         <div class="vs-form-grid">
             <div class="vs-form-row">
-                <label class="vs-label">ICP 备案号（主域名）</label>
+                <label class="vs-label">ICP 备案号</label>
                 <input type="text" name="site_icp" class="vs-input"
                        value="<?php echo vs_e(Config::get('site_icp', '')); ?>"
                        placeholder="例如 京ICP备12345678号">
             </div>
             <div class="vs-form-row">
-                <label class="vs-label">公安备案号（主域名）</label>
+                <label class="vs-label">公安备案号</label>
                 <input type="text" name="site_gongan" class="vs-input"
                        value="<?php echo vs_e(Config::get('site_gongan', '')); ?>"
                        placeholder="例如 京公网安备11010802012345号">
@@ -268,54 +149,28 @@ vs_admin_accordion_start(
 
 <?php
 vs_admin_accordion_start(
-    'settings-domains',
-    '绑定子域名',
-    '可为不同域名设置独立的站点名称与备案号，用户通过对应域名访问时自动展示',
-    $editDomain !== null
+    'settings-register',
+    '用户注册',
+    '限制可注册邮箱后缀，减少临时邮箱滥用'
 );
 ?>
-    <div id="domainsListWrap">
-    <?php if (count($domains) > 0): ?>
-        <?php vs_settings_render_domain_list($domains); ?>
-    <?php else: ?>
-        <p class="vs-form-tip" id="domainsEmptyTip">暂无绑定子域名，可在下方添加</p>
-    <?php endif; ?>
-    </div>
-
-    <form method="post" action="" class="vs-form vs-form--spaced-top" id="domainForm" data-ajax="1">
-        <input type="hidden" name="action" value="<?php echo $editDomain ? 'update_domain' : 'add_domain'; ?>">
-        <?php if ($editDomain): ?>
-            <input type="hidden" name="domain_id" value="<?php echo (int) $editDomain['id']; ?>">
-        <?php endif; ?>
-        <h4 class="vs-form-subtitle"><?php echo $editDomain ? '编辑绑定域名' : '添加绑定域名'; ?></h4>
-        <div class="vs-form-grid">
-            <div class="vs-form-row">
-                <label class="vs-label">域名</label>
-                <input type="text" name="domain" class="vs-input" required
-                       value="<?php echo vs_e($editDomain ? $editDomain['domain'] : ''); ?>"
-                       placeholder="sub.example.com">
-            </div>
-            <div class="vs-form-row">
-                <label class="vs-label">站点名称</label>
-                <input type="text" name="domain_site_name" class="vs-input" required
-                       value="<?php echo vs_e($editDomain ? $editDomain['site_name'] : ''); ?>">
-            </div>
-            <div class="vs-form-row">
-                <label class="vs-label">ICP 备案号</label>
-                <input type="text" name="domain_icp" class="vs-input"
-                       value="<?php echo vs_e($editDomain ? $editDomain['icp_number'] : ''); ?>">
-            </div>
-            <div class="vs-form-row">
-                <label class="vs-label">公安备案号</label>
-                <input type="text" name="domain_gongan" class="vs-input"
-                       value="<?php echo vs_e($editDomain ? $editDomain['gongan_number'] : ''); ?>">
-            </div>
+    <form method="post" action="" class="vs-form" id="registerForm" data-ajax="1">
+        <input type="hidden" name="action" value="save_register">
+        <?php
+        vs_render_notice(
+            'info',
+            '邮箱后缀白名单',
+            '<p>每行填写一个邮箱后缀（如 <code>qq.com</code> 或 <code>@163.com</code>）。</p><p>留空表示不限制，所有邮箱均可注册。</p>',
+            array('allow_html' => true, 'compact' => true)
+        );
+        ?>
+        <div class="vs-form-row">
+            <label class="vs-label">允许的邮箱后缀</label>
+            <textarea name="register_email_suffixes" class="vs-textarea" rows="5"
+                      placeholder="qq.com&#10;163.com&#10;gmail.com"><?php echo vs_e($registerSuffixes); ?></textarea>
         </div>
         <div class="vs-form-actions">
-            <button type="submit" class="vs-btn vs-btn--primary"><?php echo $editDomain ? '保存修改' : '添加域名'; ?></button>
-            <?php if ($editDomain): ?>
-                <a href="<?php echo vs_e($vsBase); ?>/admin/settings.php" class="vs-btn vs-btn--default">取消编辑</a>
-            <?php endif; ?>
+            <button type="submit" class="vs-btn vs-btn--primary">保存注册设置</button>
         </div>
     </form>
 <?php vs_admin_accordion_end(); ?>

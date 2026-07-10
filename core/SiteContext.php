@@ -1,7 +1,7 @@
 <?php
 /**
  * 文件：core/SiteContext.php
- * 作用：按当前访问域名解析站点展示信息
+ * 作用：站点展示信息（单域名，读取系统配置）
  *
  * 说明：系统版本以 core/version.php 中 VS_VERSION 为准。
  */
@@ -22,13 +22,33 @@ class SiteContext
     }
 
     /**
+     * 规范化 Host（去端口、转小写）
+     *
+     * @param string $host
+     * @return string
+     */
+    public static function normalizeHost($host)
+    {
+        $host = strtolower(trim((string) $host));
+        if ($host === '') {
+            return '';
+        }
+
+        if (strpos($host, ':') !== false) {
+            $host = preg_replace('/:\d+$/', '', $host);
+        }
+
+        return $host;
+    }
+
+    /**
      * 当前访问 Host
      *
      * @return string
      */
     public static function currentHost()
     {
-        return isset($_SERVER['HTTP_HOST']) ? Domain::normalizeHost($_SERVER['HTTP_HOST']) : '';
+        return isset($_SERVER['HTTP_HOST']) ? self::normalizeHost($_SERVER['HTTP_HOST']) : '';
     }
 
     /**
@@ -42,12 +62,8 @@ class SiteContext
             return self::$cache;
         }
 
-        $host = self::currentHost();
-        $primaryDomain = Domain::normalizeHost((string) Config::get('primary_domain', ''));
-
-        $base = array(
-            'host'             => $host,
-            'is_primary'       => true,
+        self::$cache = array(
+            'host'             => self::currentHost(),
             'site_name'        => trim((string) Config::get('site_name', 'misc-api')),
             'site_description' => trim((string) Config::get('site_description', '')),
             'site_keywords'    => trim((string) Config::get('site_keywords', '')),
@@ -57,30 +73,6 @@ class SiteContext
             'gongan_number'    => trim((string) Config::get('site_gongan', '')),
         );
 
-        if ($host !== '' && $primaryDomain !== '' && Domain::hostsMatch($host, $primaryDomain)) {
-            self::$cache = $base;
-            return self::$cache;
-        }
-
-        if ($host !== '' && InstallChecker::isInstalled()) {
-            $bound = Domain::findByHost($host);
-            if ($bound) {
-                self::$cache = array(
-                    'host'             => $host,
-                    'is_primary'       => false,
-                    'site_name'        => trim($bound['site_name']) !== '' ? trim($bound['site_name']) : $base['site_name'],
-                    'site_description' => $base['site_description'],
-                    'site_keywords'    => $base['site_keywords'],
-                    'site_favicon'     => $base['site_favicon'],
-                    'site_logo'        => $base['site_logo'],
-                    'icp_number'       => trim((string) $bound['icp_number']),
-                    'gongan_number'    => trim((string) $bound['gongan_number']),
-                );
-                return self::$cache;
-            }
-        }
-
-        self::$cache = $base;
         return self::$cache;
     }
 

@@ -157,6 +157,40 @@ class UpdateLog
     }
 
     /**
+     * 将 versions 节点规范为带 version 字段的记录列表
+     *
+     * 支持两种 JSON 结构：
+     * - 对象：{"1.1.0": {"title": "...", ...}}
+     * - 数组：[{"version": "1.1.0", "title": "...", ...}]
+     *
+     * @param array $versionsNode
+     * @return array
+     */
+    private static function normalizeVersionRows(array $versionsNode)
+    {
+        $rows = array();
+
+        foreach ($versionsNode as $key => $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+
+            $ver = isset($row['version']) ? trim((string) $row['version']) : '';
+            if ($ver === '' && is_string($key) && preg_match('/^\d+\.\d+\.\d+/', $key)) {
+                $ver = trim($key);
+            }
+            if ($ver === '') {
+                continue;
+            }
+
+            $row['version'] = $ver;
+            $rows[] = $row;
+        }
+
+        return $rows;
+    }
+
+    /**
      * 全部版本记录（新→旧）
      *
      * @return array
@@ -169,18 +203,7 @@ class UpdateLog
             return array();
         }
 
-        $versions = array();
-        foreach ($data['versions'] as $row) {
-            if (!is_array($row)) {
-                continue;
-            }
-            $ver = isset($row['version']) ? trim((string) $row['version']) : '';
-            if ($ver === '') {
-                continue;
-            }
-            $row['version'] = $ver;
-            $versions[] = $row;
-        }
+        $versions = self::normalizeVersionRows($data['versions']);
 
         usort($versions, function ($a, $b) {
             return version_compare($b['version'], $a['version']);
@@ -220,10 +243,7 @@ class UpdateLog
             return '';
         }
 
-        foreach ($data['versions'] as $row) {
-            if (empty($row['version'])) {
-                continue;
-            }
+        foreach (self::normalizeVersionRows($data['versions']) as $row) {
             if (version_compare($row['version'], $localVersion, '>')) {
                 $candidates[] = $row['version'];
             }
@@ -252,10 +272,7 @@ class UpdateLog
             return 0;
         }
 
-        foreach ($data['versions'] as $row) {
-            if (empty($row['version'])) {
-                continue;
-            }
+        foreach (self::normalizeVersionRows($data['versions']) as $row) {
             if (version_compare($row['version'], $localVersion, '>')) {
                 $count++;
             }

@@ -40,17 +40,6 @@ CREATE TABLE IF NOT EXISTS `{prefix}config` (
     UNIQUE KEY `uk_key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统配置表';
 
--- 绑定域名表
-CREATE TABLE IF NOT EXISTS `{prefix}domain` (
-    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `domain` varchar(255) NOT NULL,
-    `site_name` varchar(100) NOT NULL DEFAULT '',
-    `icp_number` varchar(100) NOT NULL DEFAULT '',
-    `gongan_number` varchar(100) NOT NULL DEFAULT '',
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_domain` (`domain`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='绑定域名表';
-
 -- 初始系统配置
 INSERT INTO `{prefix}config` (`key`, `value`) VALUES
 ('site_name', 'misc-api'),
@@ -58,10 +47,9 @@ INSERT INTO `{prefix}config` (`key`, `value`) VALUES
 ('site_keywords', 'misc-api,PHP,MySQL,管理系统'),
 ('site_favicon', ''),
 ('site_logo', ''),
-('primary_domain', ''),
-('bound_domains', '[]'),
 ('site_icp', ''),
 ('site_gongan', ''),
+('register_policy', '{"email_suffixes":[]}'),
 ('mail_enabled', '0'),
 ('mail_smtp_host', ''),
 ('mail_smtp_port', '465'),
