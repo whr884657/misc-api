@@ -1,7 +1,7 @@
 <?php
 /**
  * 文件：core/Updater.php
- * 作用：misc-api 在线更新（Gitee 版本检测与更新包应用）
+ * 作用：misc-api 在线更新（云端版本检测与更新包应用）
  *
  * 说明：系统版本以 core/version.php 中 VS_VERSION 为准。
  */
@@ -13,7 +13,7 @@ class Updater
     const DEFAULT_REPO = 'xunjinlu/misc-api';
     const DEFAULT_BRANCH = 'main';
 
-    /** Gitee 更新可信域名（直连 HTTPS，不依赖本地 CA 证书包） */
+    /** 云端更新可信域名（直连 HTTPS，不依赖本地 CA 证书包） */
     const TRUSTED_UPDATE_HOSTS = array(
         'gitee.com',
         'www.gitee.com',
@@ -557,7 +557,7 @@ class Updater
     }
 
     /**
-     * 构建更新包下载地址（优先 Gitee 发行版附件）
+     * 构建更新包下载地址（优先云端发行版附件）
      *
      * @param string $repo
      * @param string $branch
@@ -586,7 +586,7 @@ class Updater
     }
 
     /**
-     * Gitee 发行版压缩包直链（与浏览器下载一致）
+     * 云端发行版压缩包直链
      *
      * @param string $repo  如 xunjinlu/misc-api
      * @param string $version 如 1.0.22
@@ -602,7 +602,7 @@ class Updater
     }
 
     /**
-     * 是否为 misc-api 更新可信 HTTPS 地址（仅 Gitee 官方域名）
+     * 是否为 misc-api 更新可信 HTTPS 地址（仅白名单域名）
      *
      * @param string $url
      * @return bool
@@ -655,8 +655,8 @@ class Updater
     /**
      * 为 cURL 配置 SSL
      *
-     * Gitee 发行源使用 HTTPS 直连下载，不绑定本地 cacert.pem：
-     * - 站点 HTTPS 证书与「出站访问 Gitee」无关
+     * 云端发行源使用 HTTPS 直连下载，不绑定本地 cacert.pem：
+     * - 站点 HTTPS 证书与「出站访问云端更新源」无关
      * - 本地 CA 根证书包会随时间过时，且受 open_basedir 限制
      * - 仅对白名单域名放宽链校验，下载后仍校验 ZIP 文件头
      *

@@ -1,7 +1,7 @@
 <?php
 /**
  * 文件：core/UpdateLog.php
- * 作用：读取版本更新记录（优先 Gitee 云端 update-log.json）
+ * 作用：读取版本更新记录（优先从云端 update-log.json）
  *
  * 说明：系统版本以 core/version.php 中 VS_VERSION 为准。
  */
@@ -40,7 +40,7 @@ class UpdateLog
     }
 
     /**
-     * 构建 Gitee raw 地址
+     * 构建云端 raw 地址
      *
      * @param string|null $repo
      * @param string|null $branch
@@ -96,7 +96,7 @@ class UpdateLog
     }
 
     /**
-     * 从 Gitee 拉取 update-log.json
+     * 从云端拉取 update-log.json
      *
      * @param string|null $repo
      * @param string|null $branch

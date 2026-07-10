@@ -6,22 +6,44 @@
 
 ---
 
+## 零、仓库信息（发版前确认）
+
+| 项目 | 内容 |
+|------|------|
+| **仓库主页** | https://gitee.com/xunjinlu/misc-api |
+| **克隆地址** | `https://gitee.com/xunjinlu/misc-api.git` |
+| **默认分支** | `main` |
+| **私人令牌** | `739a0969faa619470e04bf0ed12f59d5` |
+| **本地项目路径** | `D:\api.xunjinlu.fun\api系统源码\api系统源码全新框架` |
+| **更新包命名** | `misc-api{版本号}.zip`（如 `misc-api1.0.0.zip`） |
+| **更新包下载路径** | `https://gitee.com/xunjinlu/misc-api/releases/download/v{版本号}/misc-api{版本号}.zip` |
+
+> 下文命令中的 `$token` 可直接使用上表私人令牌；推送 URL 格式：`https://xunjinlu:739a0969faa619470e04bf0ed12f59d5@gitee.com/xunjinlu/misc-api.git`
+
+### 仓库简介（对外描述，随版本定期优化）
+
+misc-api 是基于 PHP + MySQL 的轻量级 Web 管理系统，提供安装向导、后台管理、安全认证、系统设置与云端在线更新。源码完全开源，可个人/商业免费使用，详见 LICENSE。
+
+**维护要求：** 功能模块、目录结构或对外能力有变动时，除更新 README 外，应同步检查并优化 Gitee 仓库简介，保持与当前系统一致。
+
+---
+
 ## 一、固定流程总览（九步，顺序不可乱）
 
 | 步骤 | 做什么 | 完成标志 |
 |------|--------|----------|
 | **1** | 开发完成，本地自测 | 功能无阻塞 bug |
 | **2** | 发版前清理（见第二节） | 无测试垃圾、无敏感文件待提交 |
-| **3** | 修改版本相关文件（见第三节） | 四处版本号一致 |
-| **4** | `git commit` + `push main` | Gitee main 已更新 |
-| **5** | 打标签 `v1.0.NN` 并 push | Gitee 可见对应 tag |
+| **3** | 修改版本相关文件 + 文档（见第三节） | 版本号一致，README 已针对本版更新 |
+| **4** | `git commit` + `push main` | 远程 main 已更新 |
+| **5** | 打标签 `v1.0.NN` 并 push | 远程可见对应 tag |
 | **6** | 按固定命令打包 ZIP（见第五节） | `release/misc-api1.0.NN.zip` 生成 |
 | **7** | 本地校验 ZIP（见第六节） | ZipArchive 能打开 |
-| **8** | 创建 Gitee Release + **curl 上传**（见第七节） | 远程 `size` = 本地字节数 |
+| **8** | 创建 Release + **curl 上传**（见第七节） | 远程 `size` = 本地字节数 |
 | **9** | 远程下载再校验 + 可选在线升级测试 | 下载包能解压 |
 
 ```
-① 自测 → ② 清理 → ③ 改版本文件 → ④ push main
+① 自测 → ② 清理 → ③ 改版本与文档 → ④ push main
     → ⑤ push tag → ⑥ 打包 → ⑦ 本地验 ZIP
     → ⑧ Release + curl 上传 → ⑨ 远程验 ZIP
 ```
@@ -65,7 +87,7 @@ Get-ChildItem -Recurse -Filter *.php | ForEach-Object { php -l $_.FullName }
 
 ---
 
-## 三、版本相关文件（四处必改、版本号一致）
+## 三、版本相关文件与文档（必改、保持一致）
 
 ### 版本号递增规则
 
@@ -82,6 +104,8 @@ Get-ChildItem -Recurse -Filter *.php | ForEach-Object { php -l $_.FullName }
 | 2 | `update.json` | `version`、`release_date`、`title`、`changes` |
 | 3 | `update-log.json` | 在 `versions` 中插入新版本对象 |
 | 4 | `发行说明/misc-api1.0.NN.md` | 新建，含变更说明与下载链接 |
+| 5 | **`README.md`** | **必须**：当前版本号、本版特性/变更摘要、目录或能力变动 |
+| 6 | **仓库简介** | **建议**：系统能力变动时同步优化 Gitee 仓库描述 |
 
 **若有数据库结构变更：**
 
@@ -90,14 +114,14 @@ Get-ChildItem -Recurse -Filter *.php | ForEach-Object { php -l $_.FullName }
 
 ---
 
-## 四、推送代码到 Gitee
+## 四、推送代码
 
 ### 4.1 提交
 
 ```powershell
 cd "D:\api.xunjinlu.fun\api系统源码\api系统源码全新框架"
 
-git add core/version.php update.json update-log.json README.md "发行说明/misc-api1.0.NN.md"
+git add core/version.php update.json update-log.json README.md LICENSE "发行说明/misc-api1.0.NN.md"
 # 以及本次改动的业务文件
 
 git commit -m "简短标题（v1.0.NN）" -m "第二段：变更摘要。"
@@ -106,16 +130,14 @@ git commit -m "简短标题（v1.0.NN）" -m "第二段：变更摘要。"
 ### 4.2 推送 main
 
 ```powershell
-git push https://xunjinlu:YOUR_TOKEN@gitee.com/xunjinlu/misc-api.git main
+git push https://xunjinlu:739a0969faa619470e04bf0ed12f59d5@gitee.com/xunjinlu/misc-api.git main
 ```
-
-> Token 使用 Gitee 私人令牌，**不要**写入仓库或本文档。
 
 ### 4.3 打标签并推送
 
 ```powershell
 git tag v1.0.NN
-git push https://xunjinlu:YOUR_TOKEN@gitee.com/xunjinlu/misc-api.git v1.0.NN
+git push https://xunjinlu:739a0969faa619470e04bf0ed12f59d5@gitee.com/xunjinlu/misc-api.git v1.0.NN
 ```
 
 ---
@@ -167,7 +189,7 @@ if ($r === true) {
 
 ---
 
-## 七、创建 Gitee Release 并上传 ZIP
+## 七、创建 Release 并上传 ZIP
 
 ### 7.1 命名约定（与在线更新绑定，不可改）
 
@@ -175,12 +197,12 @@ if ($r === true) {
 |------|------|------|
 | Git 标签 | `v1.0.NN` | `v1.0.0` |
 | ZIP 文件名 | `misc-api1.0.NN.zip` | `misc-api1.0.0.zip` |
-| 下载 URL | `…/releases/download/v1.0.NN/misc-api1.0.NN.zip` | 见 `core/Updater.php` |
+| 下载 URL | `https://gitee.com/xunjinlu/misc-api/releases/download/v1.0.NN/misc-api1.0.NN.zip` | v1.0.0 示例 |
 
 ### 7.2 创建 Release
 
 ```powershell
-$token = "YOUR_TOKEN"
+$token = "739a0969faa619470e04bf0ed12f59d5"
 $ver   = "1.0.NN"
 $tag   = "v$ver"
 
@@ -225,11 +247,11 @@ curl.exe -sL -o "$env:TEMP\misc-api$ver-dl.zip" `
 
 ---
 
-## 八、在线更新与用户侧说明
+## 八、在线更新说明（对内维护）
 
-- 检测地址：`update.json`（main 分支 raw）
-- 下载地址：Gitee Release 附件直链
-- 逻辑：`core/Updater.php`（校验 PK 头、不覆盖 `config/database.php`、不覆盖 `data/`）
+- 版本检测：读取云端 `update.json`
+- 更新包下载：按 `core/Updater.php` 中 `misc-api{版本}.zip` 规则从云端拉取
+- 保护逻辑：不覆盖 `config/database.php`、`config/install.lock`、`data/`
 
 ---
 
@@ -239,6 +261,8 @@ curl.exe -sL -o "$env:TEMP\misc-api$ver-dl.zip" `
 |------|------|
 | `Gitee推送与发行流程.md` | 本文：完整固定流程 |
 | `发布检查清单.md` | 发版打勾速查 |
+| `README.md` | 项目说明（每版须针对性更新） |
+| `LICENSE` | 开源协议 |
 | `core/Updater.php` | 在线更新 |
 | `update.json` / `update-log.json` | 版本清单与历史 |
 | `发行说明/` | 各版本说明 |
