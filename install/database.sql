@@ -1,0 +1,57 @@
+-- ============================================================
+-- misc-api 数据库结构定义（安装时执行）
+-- 说明：{prefix} 为表前缀占位符，安装时自动替换
+-- ============================================================
+
+-- 管理员表
+CREATE TABLE IF NOT EXISTS `{prefix}admin` (
+    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `username` varchar(50) NOT NULL,
+    `password` char(32) NOT NULL COMMENT 'password hash',
+    `email` varchar(100) NOT NULL,
+    `avatar_url` varchar(500) NOT NULL DEFAULT '' COMMENT '自定义头像链接',
+    `status` tinyint(1) NOT NULL DEFAULT 1,
+    `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_username` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='管理员表';
+
+-- 系统配置表
+CREATE TABLE IF NOT EXISTS `{prefix}config` (
+    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `key` varchar(50) NOT NULL,
+    `value` text,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_key` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统配置表';
+
+-- 绑定域名表
+CREATE TABLE IF NOT EXISTS `{prefix}domain` (
+    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `domain` varchar(255) NOT NULL,
+    `site_name` varchar(100) NOT NULL DEFAULT '',
+    `icp_number` varchar(100) NOT NULL DEFAULT '',
+    `gongan_number` varchar(100) NOT NULL DEFAULT '',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_domain` (`domain`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='绑定域名表';
+
+-- 初始系统配置
+INSERT INTO `{prefix}config` (`key`, `value`) VALUES
+('site_name', 'misc-api'),
+('site_description', '基于 PHP + MySQL 的轻量级 Web 管理系统'),
+('site_keywords', 'misc-api,PHP,MySQL,管理系统'),
+('site_favicon', ''),
+('site_logo', ''),
+('primary_domain', ''),
+('bound_domains', '[]'),
+('site_icp', ''),
+('site_gongan', ''),
+('mail_enabled', '0'),
+('mail_smtp_host', ''),
+('mail_smtp_port', '465'),
+('mail_smtp_user', ''),
+('mail_smtp_pass', ''),
+('mail_smtp_secure', 'ssl'),
+('mail_from_email', ''),
+('mail_from_name', 'misc-api');

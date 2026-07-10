@@ -1,0 +1,351 @@
+/**
+ * 文件：assets/css/modal.css
+ * 作用：misc-api 统一弹窗（与后台/安装主题一致）
+ * @version 1.0.0
+ */
+
+.vs-modal-root {
+    position: fixed;
+    inset: 0;
+    z-index: 5000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.vs-modal-root[hidden] {
+    display: none !important;
+}
+
+.vs-modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(17, 17, 17, 0.45);
+    backdrop-filter: blur(2px);
+}
+
+.vs-modal {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 420px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
+    animation: vsModalIn 0.22s ease;
+}
+
+@keyframes vsModalIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.vs-modal__head {
+    padding: 20px 24px 0;
+}
+
+.vs-modal__title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111;
+    line-height: 1.4;
+}
+
+.vs-modal__body {
+    padding: 12px 24px 20px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #6b7280;
+}
+
+.vs-modal__foot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 0 24px 20px;
+}
+
+.vs-modal__foot .vs-btn {
+    min-width: 88px;
+}
+
+body.vs-modal-open {
+    overflow: hidden;
+}
+
+.vs-update-modal__ver {
+    margin: 0 0 8px;
+    font-size: 14px;
+    color: #374151;
+}
+
+.vs-update-modal__date,
+.vs-update-modal__title-text {
+    margin: 0 0 10px;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.vs-update-modal__title-text {
+    font-weight: 600;
+    color: #111;
+}
+
+.vs-update-modal__list {
+    margin: 0 0 12px;
+    padding-left: 20px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #4b5563;
+}
+
+.vs-update-modal__list li {
+    margin-bottom: 4px;
+}
+
+.vs-update-modal__tip,
+.vs-update-modal__loading {
+    margin: 0;
+    font-size: 13px;
+    color: #9ca3af;
+    line-height: 1.6;
+}
+
+.vs-update-modal__tip--warn {
+    color: #b45309;
+}
+
+.vs-update-modal__backup-tip {
+    margin: 0 0 10px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #4b5563;
+}
+
+.vs-update-modal__backup-tip:last-child {
+    margin-bottom: 0;
+}
+
+.vs-modal {
+    max-width: 480px;
+}
+
+/* ── 更新进度分步 ── */
+.vs-update-progress__hint {
+    margin: 0 0 16px;
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.6;
+}
+
+.vs-update-progress__steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.vs-update-progress__step {
+    display: grid;
+    grid-template-columns: 20px 1fr auto;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: #f9fafb;
+    transition: background 0.2s ease;
+}
+
+.vs-update-progress__step.is-active {
+    background: #eff6ff;
+}
+
+.vs-update-progress__step.is-done {
+    background: #f0fdf4;
+}
+
+.vs-update-progress__step.is-error {
+    background: #fef2f2;
+}
+
+.vs-update-progress__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #d1d5db;
+    justify-self: center;
+}
+
+.vs-update-progress__step.is-active .vs-update-progress__dot {
+    background: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+    animation: vsUpdatePulse 1.2s ease-in-out infinite;
+}
+
+.vs-update-progress__step.is-done .vs-update-progress__dot {
+    background: #16a34a;
+}
+
+.vs-update-progress__step.is-error .vs-update-progress__dot {
+    background: #dc2626;
+}
+
+.vs-update-progress__label {
+    font-size: 14px;
+    color: #374151;
+    font-weight: 500;
+}
+
+.vs-update-progress__step.is-active .vs-update-progress__label {
+    color: #1d4ed8;
+}
+
+.vs-update-progress__state {
+    font-size: 12px;
+    color: #9ca3af;
+    white-space: nowrap;
+}
+
+.vs-update-progress__step.is-active .vs-update-progress__state {
+    color: #2563eb;
+    animation: vsUpdateBlink 1s ease-in-out infinite;
+}
+
+.vs-update-progress__step.is-done .vs-update-progress__state {
+    color: #16a34a;
+}
+
+.vs-update-progress__step.is-error .vs-update-progress__state {
+    color: #dc2626;
+}
+
+@keyframes vsUpdatePulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.15); opacity: 0.85; }
+}
+
+@keyframes vsUpdateBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.45; }
+}
+
+/* ── 文件/分享管理弹窗壳（全站 admin 共用） ── */
+.vs-modal-shell {
+    position: fixed;
+    inset: 0;
+    z-index: 4800;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(2px);
+}
+
+.vs-modal-shell.is-open {
+    display: flex;
+}
+
+.vs-modal-shell[hidden] {
+    display: none !important;
+}
+
+.vs-modal-shell--stack {
+    z-index: 4900;
+}
+
+.vs-modal-shell .vs-modal {
+    width: 100%;
+    max-width: 440px;
+    max-height: calc(100vh - 40px);
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
+    animation: vsModalIn 0.22s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.vs-modal-shell .vs-modal__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 20px 0;
+    flex-shrink: 0;
+}
+
+.vs-modal-shell .vs-modal__title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    color: #0f172a;
+}
+
+.vs-modal-shell .vs-modal__close {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: #f1f5f9;
+    color: #64748b;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vs-modal-shell .vs-modal__close:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+.vs-modal-shell .vs-modal__body {
+    padding: 16px 20px 8px;
+    overflow: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.vs-modal-shell .vs-modal__foot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 12px 20px 20px;
+    flex-shrink: 0;
+}
+
+.vs-modal-shell .vs-form {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+@media (max-width: 768px) {
+    .vs-modal-shell {
+        align-items: flex-end;
+        padding: 0;
+    }
+
+    .vs-modal-shell .vs-modal {
+        max-width: none;
+        width: 100%;
+        height: auto;
+        max-height: var(--vs-mobile-drawer-height, 80vh);
+        border-radius: 16px 16px 0 0;
+    }
+}

@@ -1,0 +1,103 @@
+# misc-api
+
+基于 PHP + MySQL 的轻量级 Web 管理系统。提供完整的**认证体系**、**后台管理界面**、**在线更新机制**和**安装向导**。
+
+**当前版本：** 1.0.0
+
+## 项目特性
+
+- **安装向导**：五步 Web 安装流程，自动检测运行环境
+- **安全认证**：CSRF 防护、登录频率限制、会话超时、安全 Cookie 配置
+- **响应式后台**：PC 与移动端自动适配，侧边栏菜单 + 顶部导航
+- **角色动画登录页**：有趣的可交互角色动画
+- **主题切换**：支持自定义背景色主题
+- **在线更新**：从 Gitee 检测版本并一键更新
+- **邮箱集成**：SMTP 发信支持，忘记密码邮件验证码
+- **多域名支持**：绑定子域名，独立站点名称和备案信息
+- **统一弹窗/Toast**：全局弹窗和消息提示组件
+
+## 目录结构
+
+```
+misc-api/
+├── admin/                  # 管理后台
+│   ├── includes/           # 后台布局组件
+│   ├── index.php           # 控制台首页
+│   ├── init.php            # 后台统一入口
+│   ├── login.php           # 管理员登录
+│   ├── register.php        # 管理员注册
+│   ├── forgot.php          # 忘记密码
+│   ├── account.php         # 账号设置
+│   ├── settings.php        # 系统设置
+│   ├── upgrade.php         # 系统升级
+│   ├── update.php          # 更新 API
+│   └── about.php           # 关于页面
+├── assets/                 # 前端静态资源
+├── config/                 # 配置目录（安装时生成 database.php）
+├── core/                   # 核心类库
+├── data/                   # 运行时数据
+├── install/                # 安装向导
+├── index.php               # 前台首页
+├── update.json             # 更新清单
+├── update-log.json         # 更新日志
+└── .htaccess               # Apache 伪静态配置
+```
+
+## 环境要求
+
+| 依赖 | 版本要求 |
+|------|---------|
+| PHP | >= 7.4（推荐 8.0+） |
+| MySQL | >= 5.7（推荐 8.0+） |
+| PHP 扩展 | PDO, PDO_MySQL, cURL, ZipArchive, OpenSSL, MBString |
+
+## 快速开始
+
+### 1. 部署
+
+```bash
+cp -r misc-api /var/www/html/
+```
+
+### 2. 安装
+
+访问 `http://yoursite.com/install/` 按照向导完成五步安装。
+
+### 3. 登录
+
+安装完成后访问 `http://yoursite.com/admin/login.php` 登录管理后台。
+
+## 在线更新
+
+框架内置在线更新功能，从 Gitee 检测新版本：
+
+1. 登录后台，进入「系统升级」
+2. 点击「检测更新」查看版本对比
+3. 点击「安装更新」自动下载并部署
+
+更新机制的保护措施：
+- 不会覆盖 `config/database.php`
+- 不会覆盖 `config/install.lock`
+- 不会覆盖 `data/` 目录
+- 更新前自动备份数据库配置指纹
+
+## 版本管理
+
+版本号定义在 `core/version.php` 的 `VS_VERSION` 常量中。发版时需要同步更新：
+
+1. `core/version.php` - 版本号常量
+2. `update.json` - 更新清单
+3. `update-log.json` - 更新日志
+4. `发行说明/misc-apiX.Y.Z.md` - 发行说明
+5. Gitee Release - 创建对应版本的发行版附件
+
+### 版本号递增规则
+
+| 类型 | 示例 | 适用 |
+|------|------|------|
+| **小版本** | `1.0.0` → `1.0.1` | 单点修复、UI 微调、文档、少量文件 |
+| **大版本** | `1.0.x` → `1.1.0` 或 `2.0.0` | 多模块重构、大功能改版、库表大迁移 |
+
+## 仓库地址
+
+https://gitee.com/xunjinlu/misc-api

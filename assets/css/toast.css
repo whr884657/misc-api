@@ -1,0 +1,71 @@
+/**
+ * 文件：assets/css/toast.css
+ * 作用：全局胶囊弹出提示（Toast），统一固定在页面顶部
+ * @version 1.0.0
+ */
+
+.vs-toast-host {
+    position: fixed;
+    top: calc(12px + env(safe-area-inset-top, 0px));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10050;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+    max-width: min(92vw, 480px);
+}
+
+.vs-admin-body .vs-toast-host {
+    top: calc(var(--vs-topbar-height, 56px) + 8px + env(safe-area-inset-top, 0px));
+}
+
+.vs-toast {
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #fff;
+    background: rgba(30, 30, 30, 0.88);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+    transition: opacity 0.28s ease, transform 0.28s ease;
+    text-align: center;
+    word-break: break-word;
+}
+
+.vs-toast.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.vs-toast--success {
+    background: rgba(22, 119, 78, 0.94);
+}
+
+.vs-toast--error {
+    background: rgba(180, 45, 45, 0.94);
+}
+
+.vs-toast--info {
+    background: rgba(30, 30, 30, 0.88);
+}
+
+@media (max-width: 767px) {
+    .vs-toast-host {
+        top: calc(10px + env(safe-area-inset-top, 0px));
+        max-width: min(94vw, 480px);
+    }
+
+    .vs-admin-body .vs-toast-host {
+        top: calc(var(--vs-topbar-height, 56px) + 6px + env(safe-area-inset-top, 0px));
+    }
+
+    .vs-toast {
+        font-size: 13px;
+        padding: 9px 16px;
+    }
+}
