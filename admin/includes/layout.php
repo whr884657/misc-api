@@ -21,6 +21,12 @@ function vs_admin_menu_groups()
             'url'   => '/admin/index.php',
         ),
         array(
+            'id'    => 'data-screen',
+            'title' => '数据大屏',
+            'icon'  => 'ai',
+            'url'   => '/admin/data-screen.php',
+        ),
+        array(
             'id'       => 'api',
             'title'    => 'API 管理',
             'icon'     => 'cloud',
@@ -63,6 +69,7 @@ function vs_admin_menu_groups()
                 array('id' => 'settings', 'title' => '系统设置', 'url' => '/admin/settings.php'),
                 array('id' => 'theme', 'title' => '主题设置', 'url' => '/admin/system/theme.php'),
                 array('id' => 'logs', 'title' => '日志查询', 'url' => '/admin/system/logs.php'),
+                array('id' => 'redis', 'title' => 'Redis 管理', 'url' => '/admin/system/redis.php'),
                 array('id' => 'upgrade', 'title' => '系统升级', 'url' => '/admin/upgrade.php'),
                 array('id' => 'about', 'title' => '关于', 'url' => '/admin/about.php'),
             ),
