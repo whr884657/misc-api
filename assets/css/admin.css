@@ -628,6 +628,12 @@
 }
 
 /* ── 账号设置页 ── */
+.vs-account-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
 .vs-account-form__layout {
     display: flex;
     flex-direction: column;
@@ -678,14 +684,38 @@
 }
 
 @media (min-width: 900px) {
+    .vs-account-shell {
+        display: grid;
+        grid-template-columns: 260px minmax(0, 1fr);
+        grid-template-rows: auto 1fr;
+        column-gap: 32px;
+        row-gap: 16px;
+        align-items: start;
+    }
+
+    .vs-account-form {
+        display: contents;
+    }
+
     .vs-account-form__layout {
-        flex-direction: row;
-        align-items: flex-start;
-        gap: 32px;
+        display: contents;
     }
 
     .vs-account-form__aside {
-        width: 260px;
+        grid-column: 1;
+        grid-row: 1;
+        width: auto;
+    }
+
+    .vs-oauth-bind-section {
+        grid-column: 1;
+        grid-row: 2;
+        align-self: start;
+    }
+
+    .vs-account-form__main {
+        grid-column: 2;
+        grid-row: 1 / span 2;
     }
 
     .vs-form-row--account {
@@ -1438,32 +1468,41 @@ select.vs-input {
 
 /* ── 账号设置 · 第三方绑定 ── */
 .vs-oauth-bind-section {
-    margin-top: 24px;
-    padding-top: 24px;
-    border-top: 1px solid var(--vs-border);
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+}
+
+.vs-oauth-bind-section .vs-form-section__title {
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.vs-oauth-bind-section .vs-notice {
+    margin-bottom: 10px;
 }
 
 .vs-oauth-bind-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 
 .vs-oauth-bind-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    padding: 12px 14px;
+    gap: 10px;
+    padding: 10px 12px;
     border: 1px solid var(--vs-border);
-    border-radius: 10px;
+    border-radius: 8px;
     background: var(--vs-content-bg);
 }
 
 .vs-oauth-bind-item__info {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     min-width: 0;
 }
 
@@ -1488,8 +1527,46 @@ select.vs-input {
     flex-shrink: 0;
 }
 
+.vs-oauth-bind-item__action .vs-btn--oauth-action {
+    border-radius: 6px;
+    height: auto;
+    min-height: 32px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.vs-oauth-bind-item__action .vs-btn--default.vs-btn--oauth-action {
+    border-radius: 6px;
+}
+
+.vs-oauth-bind-item__action .vs-btn--text.vs-btn--oauth-action {
+    border: 1px solid var(--vs-border);
+    border-radius: 6px;
+    background: var(--vs-white);
+    color: var(--vs-text-secondary);
+    height: auto;
+    min-height: 32px;
+    padding: 6px 14px;
+}
+
+.vs-oauth-bind-item__action .vs-btn--text.vs-btn--oauth-action:hover {
+    border-color: var(--vs-danger);
+    color: var(--vs-danger);
+    background: #fff5f5;
+}
+
 .vs-oauth-unbind-form {
     margin: 0;
+}
+
+@media (max-width: 899px) {
+    .vs-oauth-bind-section {
+        margin-top: 4px;
+        padding-top: 16px;
+        border-top: 1px solid var(--vs-border);
+    }
 }
 
 @media (max-width: 480px) {
@@ -1499,5 +1576,12 @@ select.vs-input {
 
     .vs-oauth-bind-item__name {
         font-size: 13px;
+    }
+
+    .vs-oauth-bind-item__action .vs-btn--oauth-action {
+        min-height: 30px;
+        padding: 5px 12px;
+        font-size: 12px;
+        border-radius: 6px;
     }
 }

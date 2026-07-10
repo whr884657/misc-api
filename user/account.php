@@ -79,20 +79,21 @@ vs_user_layout_start('账号设置', 'account');
         <div class="vs-alert vs-alert--success"><?php echo vs_e($success); ?></div>
     <?php endif; ?>
 
-    <form method="post" action="" class="vs-form vs-account-form" id="accountForm">
-        <div class="vs-account-form__layout">
-            <aside class="vs-account-form__aside">
-                <div class="vs-account-avatar">
-                    <img src="<?php echo vs_e($avatarPreview); ?>" alt="" class="vs-account-avatar__img" id="avatarPreview"
-                         data-fallback="<?php echo vs_e(UserAvatar::localRandomAvatar($vsUser ? (int) $vsUser['id'] : 0)); ?>">
-                    <label class="vs-label vs-account-avatar__label">头像链接</label>
-                    <input type="url" name="avatar_url" id="avatarUrlInput" class="vs-input"
-                           value="<?php echo vs_e($avatarUrl); ?>" placeholder="https://example.com/avatar.jpg">
-                    <?php vs_render_notice('tip', '', '输入图片 URL，留空则使用 QQ 邮箱头像或默认头像', array('field' => true, 'compact' => true)); ?>
-                </div>
-            </aside>
+    <div class="vs-account-shell">
+        <form method="post" action="" class="vs-form vs-account-form" id="accountForm">
+            <div class="vs-account-form__layout">
+                <aside class="vs-account-form__aside">
+                    <div class="vs-account-avatar">
+                        <img src="<?php echo vs_e($avatarPreview); ?>" alt="" class="vs-account-avatar__img" id="avatarPreview"
+                             data-fallback="<?php echo vs_e(UserAvatar::localRandomAvatar($vsUser ? (int) $vsUser['id'] : 0)); ?>">
+                        <label class="vs-label vs-account-avatar__label">头像链接</label>
+                        <input type="url" name="avatar_url" id="avatarUrlInput" class="vs-input"
+                               value="<?php echo vs_e($avatarUrl); ?>" placeholder="https://example.com/avatar.jpg">
+                        <?php vs_render_notice('tip', '', '输入图片 URL，留空则使用 QQ 邮箱头像或默认头像', array('field' => true, 'compact' => true)); ?>
+                    </div>
+                </aside>
 
-            <div class="vs-account-form__main">
+                <div class="vs-account-form__main">
                 <div class="vs-form-section">
                     <h3 class="vs-form-section__title">基本信息</h3>
                     <div class="vs-form-row vs-form-row--account">
@@ -162,10 +163,10 @@ vs_user_layout_start('账号设置', 'account');
                             <input type="hidden" name="action" value="oauth_unbind">
                             <input type="hidden" name="provider" value="qq">
                             <input type="hidden" name="csrf_token" value="<?php echo vs_e(AuthSecurity::csrfToken()); ?>">
-                            <button type="submit" class="vs-btn vs-btn--text vs-btn--sm">解绑</button>
+                            <button type="submit" class="vs-btn vs-btn--text vs-btn--oauth-action">解绑</button>
                         </form>
                     <?php else: ?>
-                        <a href="<?php echo vs_e($vsBase); ?>/user/oauth/start.php?provider=qq&amp;intent=bind" class="vs-btn vs-btn--default vs-btn--sm">绑定</a>
+                        <a href="<?php echo vs_e($vsBase); ?>/user/oauth/start.php?provider=qq&amp;intent=bind" class="vs-btn vs-btn--default vs-btn--oauth-action">绑定</a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -185,10 +186,10 @@ vs_user_layout_start('账号设置', 'account');
                             <input type="hidden" name="action" value="oauth_unbind">
                             <input type="hidden" name="provider" value="gitee">
                             <input type="hidden" name="csrf_token" value="<?php echo vs_e(AuthSecurity::csrfToken()); ?>">
-                            <button type="submit" class="vs-btn vs-btn--text vs-btn--sm">解绑</button>
+                            <button type="submit" class="vs-btn vs-btn--text vs-btn--oauth-action">解绑</button>
                         </form>
                     <?php else: ?>
-                        <a href="<?php echo vs_e($vsBase); ?>/user/oauth/start.php?provider=gitee&amp;intent=bind" class="vs-btn vs-btn--default vs-btn--sm">绑定</a>
+                        <a href="<?php echo vs_e($vsBase); ?>/user/oauth/start.php?provider=gitee&amp;intent=bind" class="vs-btn vs-btn--default vs-btn--oauth-action">绑定</a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -196,6 +197,7 @@ vs_user_layout_start('账号设置', 'account');
         </div>
     </div>
     <?php endif; ?>
+    </div>
 </div>
 
 <?php vs_user_layout_end(array('account.js')); ?>
