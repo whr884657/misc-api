@@ -1,25 +1,23 @@
 <?php
 /**
- * 文件：admin/login.php
- * 作用：misc-api 管理员登录页面
- *
- * 说明：系统版本以 core/version.php 中 VS_VERSION 为准。
+ * 文件：user/login.php
+ * 作用：用户登录页面
  */
 
 define('VS_ROOT', dirname(__DIR__));
 require_once VS_ROOT . '/core/bootstrap.php';
-require_once __DIR__ . '/includes/auth_layout.php';
+require_once VS_ROOT . '/admin/includes/auth_layout.php';
 
 InstallChecker::requireInstalled();
 
 $base = vs_base_url();
 
 if (isset($_GET['action']) && $_GET['action'] === 'logout') {
-    Auth::logout();
-    vs_redirect($base . '/admin/login.php');
+    UserAuth::logout();
+    vs_redirect($base . '/user/login.php');
 }
 
-Auth::redirectIfLoggedIn();
+UserAuth::redirectIfLoggedIn();
 
 $siteName = SiteContext::siteName();
 
@@ -38,11 +36,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         vs_auth_json(array('code' => 0, 'msg' => $loginBlocked));
     }
 
-    if (Auth::login($username, $password)) {
+    if (UserAuth::login($username, $password)) {
         vs_auth_json(array(
             'code' => 1,
             'msg'  => '登录成功',
-            'url'  => $base . '/admin/index.php',
+            'url'  => $base . '/user/index.php',
         ));
     }
 
@@ -50,13 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     vs_auth_json(array('code' => 0, 'msg' => '用户名/邮箱或密码错误'));
 }
 
-if (isset($_GET['expired']) && $_GET['expired'] === '1') {
-    $expiredMsg = '登录已超时，请重新登录';
-} else {
-    $expiredMsg = '';
-}
+$expiredMsg = (isset($_GET['expired']) && $_GET['expired'] === '1') ? '登录已超时，请重新登录' : '';
 
-vs_auth_head('登录');
+vs_auth_head('用户登录');
 ?>
 
 <div class="page">
@@ -66,6 +60,7 @@ vs_auth_head('登录');
         <div class="form-box">
             <div class="header header-desktop">
                 <h1><?php echo vs_e($siteName); ?></h1>
+                <p class="header-sub">用户登录</p>
             </div>
 
             <div id="formMessage" class="form-message" role="alert" hidden></div>
@@ -90,10 +85,14 @@ vs_auth_head('登录');
                         <input type="checkbox" id="rememberCredentials" value="1">
                         记住账号密码
                     </label>
-                    <a href="<?php echo vs_e($base); ?>/admin/forgot.php">忘记密码？</a>
+                    <a href="<?php echo vs_e($base); ?>/user/forgot.php">忘记密码？</a>
                 </div>
 
                 <?php echo vs_auth_submit_btn('登 录', 'loginBtn', 'login-btn'); ?>
+
+                <div class="divider">
+                    还没有账号？<a href="<?php echo vs_e($base); ?>/user/register.php">立即注册</a>
+                </div>
             </form>
         </div>
     </div>
@@ -108,7 +107,7 @@ vs_auth_head('登录');
     var loginBtn = document.getElementById('loginBtn');
     var rememberEl = document.getElementById('rememberCredentials');
     var expiredMsg = <?php echo json_encode($expiredMsg, JSON_UNESCAPED_UNICODE); ?>;
-    var storageKey = 'vs_login_credentials';
+    var storageKey = 'vs_user_login_credentials';
 
     if (!form) return;
 
@@ -131,16 +130,11 @@ vs_auth_head('登录');
     function saveCredentials(username, password, remember) {
         try {
             if (remember) {
-                localStorage.setItem(storageKey, JSON.stringify({
-                    username: username,
-                    password: password
-                }));
+                localStorage.setItem(storageKey, JSON.stringify({ username: username, password: password }));
             } else {
                 localStorage.removeItem(storageKey);
             }
-        } catch (err) {
-            /* 隐私模式等场景可能无法写入 */
-        }
+        } catch (err) {}
     }
 
     loadSavedCredentials();
@@ -204,11 +198,7 @@ vs_auth_head('登录');
             .then(function (res) { return res.json(); })
             .then(function (data) {
                 if (data.code === 1) {
-                    saveCredentials(
-                        username,
-                        password,
-                        rememberEl && rememberEl.checked
-                    );
+                    saveCredentials(username, password, rememberEl && rememberEl.checked);
                     showMessage(data.msg || '登录成功', 'success');
                     if (data.url) {
                         setTimeout(function () { window.location.href = data.url; }, 800);
@@ -223,12 +213,6 @@ vs_auth_head('登录');
             .finally(function () {
                 if (loginBtn) loginBtn.disabled = false;
             });
-    });
-
-    document.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' && document.activeElement && document.activeElement.tagName !== 'BUTTON') {
-            form.requestSubmit();
-        }
     });
 })();
 </script>

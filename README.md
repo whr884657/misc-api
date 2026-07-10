@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.0.0-blue" alt="version">
+  <img src="https://img.shields.io/badge/version-1.1.0-blue" alt="version">
   <img src="https://img.shields.io/badge/License-开源-green" alt="license">
   <a href="https://gitee.com/xunjinlu/misc-api"><img src="https://img.shields.io/badge/Gitee-代码仓库-C71D23?logo=gitee" alt="Gitee"></a>
   <img src="https://img.shields.io/badge/PHP-7.4+-777BB4?logo=php&logoColor=white" alt="PHP">
@@ -16,12 +16,14 @@
 
 ## 项目简介
 
-**misc-api** 是一套可自部署的轻量级 Web 管理系统：安装后在浏览器中管理站点信息、管理员账号、域名绑定与邮件发信，并支持从**云端**检测与安装系统更新。
+**misc-api** 是一套可自部署的轻量级 Web 管理系统：安装后在浏览器中管理站点信息、管理员与用户账号、域名绑定与邮件发信，并支持从**云端**检测与安装系统更新。
 
 **主要能力：**
 
 - Web 五步安装向导，自动创建数据表与初始配置
-- 分组侧边栏后台（控制台、账号设置、系统设置、系统升级、关于）
+- **双端认证**：管理员后台（安装时创建）+ 用户中心（邮箱验证码注册）
+- 分组侧边栏管理后台（控制台、账号设置、系统设置、系统升级、关于）
+- 用户模块：登录、注册、忘记密码、用户中心（注册/找回需管理员配置邮箱）
 - 管理员认证：登录、忘记密码（邮箱验证码）、CSRF 与登录频率限制
 - 站点信息、多域名绑定、SMTP 邮箱发信
 - **云端在线更新**：后台检测新版本、分步下载安装、可选数据库结构迁移
@@ -51,11 +53,14 @@
 
 | 功能 | 路径 | 说明 |
 |------|------|------|
-| 前台首页 | `/` | 读取系统名称/描述，引导进入后台 |
+| 前台首页 | `/` | 读取系统名称/描述，引导进入用户中心或管理后台 |
 | Web 安装向导 | `/install/` | 五步安装，执行 `install/database.sql` |
-| 管理员登录 | `/admin/login.php` | 登录入口，含角色动画 |
-| 管理员注册 | `/admin/register.php` | 注册界面（管理员账号在安装时创建） |
-| 忘记密码 | `/admin/forgot.php` | 邮箱验证码重置（需配置 SMTP） |
+| 用户登录 | `/user/login.php` | 用户登录入口 |
+| 用户注册 | `/user/register.php` | 邮箱验证码注册（需管理员已配置发信） |
+| 用户忘记密码 | `/user/forgot.php` | 邮箱验证码重置密码 |
+| 用户中心 | `/user/index.php` | 登录后查看账号信息 |
+| 管理员登录 | `/admin/login.php` | 管理员登录（安装时创建账号，无开放注册） |
+| 管理员忘记密码 | `/admin/forgot.php` | 邮箱验证码重置（需配置 SMTP） |
 | 管理控制台 | `/admin/index.php` | 后台首页，展示站点与版本信息 |
 | 账号设置 | `/admin/account.php` | 修改用户名、邮箱、头像、密码 |
 | 系统设置 | `/admin/settings.php` | 站点信息、域名绑定、邮箱发信配置 |
@@ -102,12 +107,17 @@ misc-api/
 │   │   ├── layout.php          # 侧边栏布局
 │   │   └── auth_layout.php     # 登录/注册/忘记密码布局
 │   ├── index.php               # 控制台
-│   ├── login.php / register.php / forgot.php
+│   ├── login.php / forgot.php
 │   ├── account.php             # 账号设置
 │   ├── settings.php            # 系统设置
 │   ├── upgrade.php             # 系统升级
 │   ├── update.php              # 更新 API
 │   └── about.php               # 关于
+├── user/                       # 用户中心
+│   ├── init.php
+│   ├── includes/layout.php
+│   ├── index.php
+│   └── login.php / register.php / forgot.php
 ├── assets/
 │   ├── css/                    # common, admin, modal, toast, install …
 │   ├── js/                     # common.js, vs-update.js, upgrade.js …
@@ -118,7 +128,7 @@ misc-api/
 ├── core/
 │   ├── bootstrap.php
 │   ├── version.php             # VS_VERSION 版本常量
-│   ├── Config.php / Auth.php / Database.php …
+│   ├── Auth.php / UserAuth.php # 管理员与用户认证
 │   ├── Updater.php             # 云端在线更新
 │   ├── UpdateLog.php           # 更新记录读取
 │   └── DatabaseMigrator.php    # 数据库增量迁移
@@ -177,6 +187,17 @@ location / {
 ---
 
 ## 版本记录
+
+### v1.1.0（2026-07-10）
+
+**类型：** 大版本（用户体系）
+
+**变更说明：**
+
+- 新增用户模块：登录、邮箱注册、忘记密码、用户中心
+- 新增 `vs_user` 数据表
+- 移除管理员开放注册
+- 用户注册需管理员配置邮箱发信
 
 ### v1.0.0（2026-07-10）
 

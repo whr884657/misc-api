@@ -27,6 +27,7 @@ vs_render_head('首页', array('index.css'));
             </div>
             <nav class="vs-nav">
                 <a href="<?php echo vs_e($base); ?>/" class="vs-nav-link is-active">首页</a>
+                <a href="<?php echo vs_e($base); ?>/user/login.php" class="vs-nav-link">用户中心</a>
                 <a href="<?php echo vs_e($base); ?>/admin/login.php" class="vs-nav-link">管理后台</a>
             </nav>
         </div>
