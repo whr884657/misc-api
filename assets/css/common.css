@@ -538,6 +538,18 @@ a:hover {
         width: 100%;
     }
 
+    .vs-account-form .vs-form-actions,
+    .vs-admin-bind-form .vs-form-actions--inline {
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+
+    .vs-account-form .vs-form-actions .vs-btn,
+    .vs-account-form .vs-form-actions .vs-btn--disabled,
+    .vs-admin-bind-form .vs-form-actions--inline .vs-btn {
+        width: auto;
+    }
+
     .vs-header-inner {
         height: 52px;
     }

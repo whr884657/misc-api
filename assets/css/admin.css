@@ -649,15 +649,15 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 20px 16px;
+    padding: 24px 20px;
     border: 1px solid var(--vs-border);
     border-radius: 12px;
     background: var(--vs-content-bg);
 }
 
 .vs-account-avatar__img {
-    width: 96px;
-    height: 96px;
+    width: 112px;
+    height: 112px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid var(--vs-border);
@@ -677,6 +677,14 @@
 .vs-account-form__main {
     flex: 1 1 auto;
     min-width: 0;
+}
+
+.vs-account-form .vs-form-actions {
+    justify-content: flex-end;
+}
+
+.vs-admin-bind-form .vs-form-actions--inline {
+    justify-content: flex-end;
 }
 
 .vs-form-row--account {
@@ -705,10 +713,10 @@
 @media (min-width: 900px) {
     .vs-account-shell {
         display: grid;
-        grid-template-columns: 260px minmax(0, 1fr);
+        grid-template-columns: 300px minmax(0, 1fr);
         grid-template-rows: auto 1fr;
-        column-gap: 32px;
-        row-gap: 16px;
+        column-gap: 48px;
+        row-gap: 20px;
         align-items: start;
     }
 
@@ -738,6 +746,14 @@
         align-self: start;
     }
 
+    .vs-account-form__main .vs-form-section + .vs-form-section {
+        margin-top: 28px;
+    }
+
+    .vs-account-form__main .vs-form-actions {
+        margin-top: 32px;
+    }
+
     .vs-account-form__main {
         grid-column: 2;
         grid-row: 1 / span 2;
@@ -746,7 +762,7 @@
     .vs-form-row--account {
         display: grid;
         grid-template-columns: 100px minmax(0, 1fr);
-        gap: 8px 16px;
+        gap: 10px 20px;
         align-items: start;
     }
 
@@ -757,7 +773,8 @@
 
     .vs-form-row--account .vs-form-row__field .vs-input,
     .vs-form-row--account .vs-form-row__field > .vs-notice {
-        max-width: 420px;
+        max-width: none;
+        width: 100%;
     }
 
     .vs-form-row--notice .vs-form-row__label--spacer {
@@ -1541,20 +1558,23 @@ select.vs-input {
     .vs-users-list-head {
         flex-direction: row;
         align-items: center;
-        justify-content: flex-end;
+        justify-content: space-between;
         gap: 10px;
     }
 
     .vs-users-list-head__text {
-        flex: 0 1 auto;
-        text-align: right;
-        order: 2;
+        flex: 1 1 auto;
+        min-width: 0;
+        text-align: left;
+        order: 1;
     }
 
     .vs-users-search {
-        order: 1;
+        order: 2;
         flex-direction: row;
-        justify-content: flex-start;
+        justify-content: flex-end;
+        flex-shrink: 0;
+        margin-left: auto;
     }
 
     .vs-users-search__toggle {
@@ -1643,7 +1663,7 @@ select.vs-input {
     justify-content: space-between;
     gap: 12px;
     flex-wrap: wrap;
-    padding: 14px 16px;
+    padding: 16px 18px;
     border: 1px solid var(--vs-border);
     border-radius: 8px;
     background: var(--vs-content-bg);
@@ -1699,7 +1719,7 @@ select.vs-input {
 }
 
 .vs-admin-bind-form {
-    max-width: 520px;
+    max-width: none;
 }
 
 /* ── 账号设置 · 第三方绑定 ── */
