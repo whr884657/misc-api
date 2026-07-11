@@ -1,6 +1,6 @@
 /**
  * 文件：assets/js/theme-settings.js
- * 作用：后台主题设置 AJAX 保存
+ * 作用：后台主题设置 AJAX 保存与选中态
  */
 (function () {
     'use strict';
@@ -8,6 +8,27 @@
     var form = document.getElementById('themeSettingsForm');
     if (!form || form.getAttribute('data-ajax') !== '1') {
         return;
+    }
+
+    function syncActiveCard() {
+        form.querySelectorAll('.vs-theme-card').forEach(function (card) {
+            var radio = card.querySelector('input[name="frontend_theme"]');
+            var isActive = radio && radio.checked;
+            card.classList.toggle('is-active', isActive);
+            var preview = card.querySelector('.vs-theme-card__preview');
+            if (!preview) {
+                return;
+            }
+            var status = preview.querySelector('.vs-theme-card__status');
+            if (isActive && !status) {
+                status = document.createElement('span');
+                status.className = 'vs-theme-card__status';
+                status.textContent = '当前使用';
+                preview.appendChild(status);
+            } else if (!isActive && status) {
+                status.remove();
+            }
+        });
     }
 
     form.addEventListener('submit', function (e) {
@@ -24,24 +45,7 @@
                     return;
                 }
                 window.VS.showMessage(data.msg || '已保存', 'success');
-                form.querySelectorAll('.vs-theme-picker-card').forEach(function (card) {
-                    card.classList.remove('is-active');
-                    var badge = card.querySelector('.vs-theme-picker-card__badge');
-                    if (badge) {
-                        badge.remove();
-                    }
-                });
-                var checked = form.querySelector('input[name="frontend_theme"]:checked');
-                if (checked) {
-                    var activeCard = checked.closest('.vs-theme-picker-card');
-                    if (activeCard) {
-                        activeCard.classList.add('is-active');
-                        var span = document.createElement('span');
-                        span.className = 'vs-theme-picker-card__badge';
-                        span.textContent = '当前使用';
-                        activeCard.appendChild(span);
-                    }
-                }
+                syncActiveCard();
             })
             .catch(function () {
                 window.VS.showMessage('网络异常，请稍后重试', 'error');
@@ -54,10 +58,6 @@
     });
 
     form.querySelectorAll('input[name="frontend_theme"]').forEach(function (radio) {
-        radio.addEventListener('change', function () {
-            form.querySelectorAll('.vs-theme-picker-card').forEach(function (card) {
-                card.classList.toggle('is-active', card.contains(radio) && radio.checked);
-            });
-        });
+        radio.addEventListener('change', syncActiveCard);
     });
 })();

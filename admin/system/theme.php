@@ -1,7 +1,7 @@
 <?php
 /**
  * 文件：admin/system/theme.php
- * 作用：前台主题设置（切换默认主题）
+ * 作用：前台主题设置（预览、选择、保存）
  */
 
 require_once dirname(__DIR__) . '/init.php';
@@ -28,37 +28,46 @@ $activeTheme = ThemeManager::activeId();
 vs_admin_layout_start('主题设置', 'theme');
 ?>
 
-<div class="vs-panel">
+<div class="vs-panel vs-theme-settings">
     <div class="vs-panel__header">
         <h2 class="vs-panel__title">前台主题</h2>
-        <p class="vs-panel__desc">选择用户访问前台页面时加载的主题包。页面 PHP 路由不变，内容由 <code>core/theme/{主题}/</code> 下的模板动态渲染。</p>
+        <p class="vs-panel__desc">选择主题后点击保存，用户访问前台时将加载对应主题包（<code>core/theme/{id}/</code>）。各主题样式与脚本完全独立。</p>
     </div>
 
     <?php if (empty($themes)): ?>
-        <?php vs_render_notice('warning', '', '未找到可用主题，请确认 core/theme/default 目录完整。', array('compact' => true)); ?>
+        <?php vs_render_notice('warning', '', '未找到可用主题，请确认 core/theme/ 目录完整。', array('compact' => true)); ?>
     <?php else: ?>
         <form method="post" action="" class="vs-form" id="themeSettingsForm" data-ajax="1">
             <input type="hidden" name="action" value="save_theme">
             <input type="hidden" name="csrf_token" value="<?php echo vs_e(AuthSecurity::csrfToken()); ?>">
 
-            <div class="vs-theme-picker-grid">
+            <div class="vs-theme-gallery">
                 <?php foreach ($themes as $theme): ?>
                     <?php $isActive = $theme['id'] === $activeTheme; ?>
-                    <label class="vs-theme-picker-card<?php echo $isActive ? ' is-active' : ''; ?>">
+                    <label class="vs-theme-card<?php echo $isActive ? ' is-active' : ''; ?>">
                         <input type="radio" name="frontend_theme" value="<?php echo vs_e($theme['id']); ?>"<?php echo $isActive ? ' checked' : ''; ?>>
-                        <div class="vs-theme-picker-card__name"><?php echo vs_e($theme['name']); ?></div>
-                        <?php if ($theme['description'] !== ''): ?>
-                            <p class="vs-theme-picker-card__desc"><?php echo vs_e($theme['description']); ?></p>
-                        <?php endif; ?>
-                        <div class="vs-theme-picker-card__meta">
-                            ID: <?php echo vs_e($theme['id']); ?>
-                            <?php if ($theme['version'] !== ''): ?>
-                                · v<?php echo vs_e($theme['version']); ?>
+                        <div class="vs-theme-card__preview">
+                            <?php if ($theme['preview_url'] !== ''): ?>
+                                <img src="<?php echo vs_e($theme['preview_url']); ?>" alt="<?php echo vs_e($theme['name']); ?> 预览" class="vs-theme-card__img" loading="lazy">
+                            <?php else: ?>
+                                <div class="vs-theme-card__placeholder">无预览图</div>
+                            <?php endif; ?>
+                            <?php if ($isActive): ?>
+                                <span class="vs-theme-card__status">当前使用</span>
                             <?php endif; ?>
                         </div>
-                        <?php if ($isActive): ?>
-                            <span class="vs-theme-picker-card__badge">当前使用</span>
-                        <?php endif; ?>
+                        <div class="vs-theme-card__body">
+                            <div class="vs-theme-card__name"><?php echo vs_e($theme['name']); ?></div>
+                            <?php if ($theme['description'] !== ''): ?>
+                                <p class="vs-theme-card__desc"><?php echo vs_e($theme['description']); ?></p>
+                            <?php endif; ?>
+                            <div class="vs-theme-card__meta">
+                                <span class="vs-theme-card__id"><?php echo vs_e($theme['id']); ?></span>
+                                <?php if ($theme['version'] !== ''): ?>
+                                    <span>v<?php echo vs_e($theme['version']); ?></span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
                     </label>
                 <?php endforeach; ?>
             </div>

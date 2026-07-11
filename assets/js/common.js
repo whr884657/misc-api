@@ -8,7 +8,7 @@
     'use strict';
 
     global.VS = global.VS || {};
-    global.VS.version = '1.9.0';
+    global.VS.version = '2.0.0';
 
     /**
      * 为 FormData 自动附加 CSRF（若表单未含 csrf_token）

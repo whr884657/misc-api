@@ -1,13 +1,14 @@
 {
-    "version": "1.9.0",
-    "title": "misc-api 1.9.0 前台主题系统与多页面",
+    "version": "2.0.0",
+    "title": "misc-api 2.0.0 双主题体系与贡献者页面",
     "release_date": "2026-07-11",
-    "db_changes": true,
+    "db_changes": false,
     "changes": [
-        "前台主题系统：core/theme/default 默认主题，页面 PHP 动态加载主题模板",
-        "新增前台页面：全部接口、文章、友情链接、赞助、关于",
-        "顶栏响应式：电脑端横向导航，手机端左侧侧边栏 + 底部登录/注册",
-        "后台主题设置：vs_config.frontend_theme 切换前台主题"
+        "主题资源完全独立：各主题 CSS/JS 存放于 core/theme/{id}/assets/",
+        "新增深岩主题（slate）：深色布局、右侧抽屉、底部 Dock，与默认主题 100% 差异化",
+        "默认主题优化：手机端名称居左、菜单按钮居右；移除冗余注册按钮",
+        "新增贡献者页面；前台导航顺序梳理",
+        "后台主题设置：预览图、画廊式选择、当前使用标识优化"
     ],
     "repo": "xunjinlu/misc-api",
     "branch": "main"

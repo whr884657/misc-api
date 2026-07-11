@@ -280,10 +280,11 @@ function vs_render_head($title, array $cssFiles = array(), $useSiteConfig = true
 /**
  * 渲染页面底部
  *
- * @param array $jsFiles
+ * @param array  $jsFiles
+ * @param array  $extraJsHrefs 完整 URL（如主题 theme.js）
  * @return void
  */
-function vs_render_foot(array $jsFiles = array())
+function vs_render_foot(array $jsFiles = array(), array $extraJsHrefs = array())
 {
     $base = vs_base_url();
     vs_render_modal_shell();
@@ -292,6 +293,12 @@ function vs_render_foot(array $jsFiles = array())
     echo '<script src="' . vs_e($base) . '/assets/js/common.js?v=' . VS_VERSION . '"></script>' . "\n";
     foreach ($jsFiles as $js) {
         echo '<script src="' . vs_e($base) . '/assets/js/' . vs_e($js) . '?v=' . VS_VERSION . '"></script>' . "\n";
+    }
+    foreach ($extraJsHrefs as $href) {
+        $href = trim((string) $href);
+        if ($href !== '') {
+            echo '<script src="' . vs_e($href) . '"></script>' . "\n";
+        }
     }
     echo '</body></html>';
 }
@@ -307,18 +314,22 @@ function vs_render_foot(array $jsFiles = array())
 function vs_frontend_page($pageKey, $pageTitle, array $pageData = array())
 {
     $extraCss = array();
-    $themeCss = ThemeManager::themeDir(ThemeManager::activeId()) . '/assets/theme.css';
-    if (is_file($themeCss)) {
-        $extraCss[] = ThemeManager::assetUrl(ThemeManager::activeId(), 'assets/theme.css') . '?v=' . VS_VERSION;
+    $cssHref = ThemeManager::activeStylesheetHref();
+    if ($cssHref !== '') {
+        $extraCss[] = $cssHref;
     }
 
-    vs_render_head($pageTitle, array('frontend.css'), true, $extraCss);
+    vs_render_head($pageTitle, array(), true, $extraCss);
 
-    echo '<div class="vs-page vs-frontend-page">' . "\n";
+    $extraJs = array();
+    $jsHref = ThemeManager::activeScriptHref();
+    if ($jsHref !== '') {
+        $extraJs[] = $jsHref;
+    }
+
     ThemeManager::renderBody($pageKey, $pageTitle, $pageData);
-    echo '</div>' . "\n";
 
-    vs_render_foot(array('frontend.js'));
+    vs_render_foot(array(), $extraJs);
 }
 
 /**
