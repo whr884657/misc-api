@@ -28,6 +28,60 @@ class UserManager
     }
 
     /**
+     * @param string $account 用户名或邮箱
+     * @return array|null
+     */
+    public static function findByAccount($account)
+    {
+        $account = trim((string) $account);
+        if ($account === '') {
+            return null;
+        }
+
+        try {
+            $pdo = Database::connect();
+            $table = Database::table('user');
+            $stmt = $pdo->prepare(
+                'SELECT `id`, `username`, `email`, `avatar_url`, `status`, `created_at`
+                 FROM `' . $table . '`
+                 WHERE `username` = ? OR `email` = ?
+                 LIMIT 1'
+            );
+            $stmt->execute(array($account, $account));
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row ?: null;
+        } catch (Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * @param int $userId
+     * @return array|null
+     */
+    public static function findById($userId)
+    {
+        $userId = (int) $userId;
+        if ($userId <= 0) {
+            return null;
+        }
+
+        try {
+            $pdo = Database::connect();
+            $table = Database::table('user');
+            $stmt = $pdo->prepare(
+                'SELECT `id`, `username`, `email`, `avatar_url`, `status`, `created_at`
+                 FROM `' . $table . '` WHERE `id` = ? LIMIT 1'
+            );
+            $stmt->execute(array($userId));
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row ?: null;
+        } catch (Exception $e) {
+            return null;
+        }
+    }
+
+    /**
      * @return int
      */
     public static function count()

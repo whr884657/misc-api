@@ -33,6 +33,46 @@
         });
     }
 
+    function updateAdminBindUI(user) {
+        var statusEl = document.getElementById('adminBindStatus');
+        var bindForm = document.getElementById('bindUserForm');
+        if (!statusEl || !user) {
+            return;
+        }
+        var text = 'ID ' + user.id + ' · ' + user.username + ' · ' + user.email;
+        statusEl.innerHTML = '<div class="vs-admin-bind-card">'
+            + '<div class="vs-admin-bind-card__info">'
+            + '<span class="vs-admin-bind-card__label">已绑定用户</span>'
+            + '<span class="vs-admin-bind-card__value" id="adminBindUserText">' + text + '</span>'
+            + '</div>'
+            + '<form method="post" action="" class="vs-admin-unbind-form" id="unbindUserForm" data-ajax="1">'
+            + '<input type="hidden" name="action" value="unbind_user">'
+            + '<button type="submit" class="vs-btn vs-btn--text">解除绑定</button>'
+            + '</form></div>';
+        if (bindForm) {
+            bindForm.hidden = true;
+            var accountInput = document.getElementById('bindUserAccount');
+            if (accountInput) {
+                accountInput.value = '';
+            }
+        }
+        var unbindForm = document.getElementById('unbindUserForm');
+        if (unbindForm) {
+            bindAjaxForm(unbindForm);
+        }
+    }
+
+    function clearAdminBindUI() {
+        var statusEl = document.getElementById('adminBindStatus');
+        var bindForm = document.getElementById('bindUserForm');
+        if (statusEl) {
+            statusEl.innerHTML = '<p class="vs-admin-bind-empty" id="adminBindEmpty">当前未绑定用户账号，后台发布内容前请先完成绑定。</p>';
+        }
+        if (bindForm) {
+            bindForm.hidden = false;
+        }
+    }
+
     function bindAjaxForm(form) {
         if (!form || form.getAttribute('data-ajax') !== '1') {
             return;
@@ -64,6 +104,16 @@
                         form.querySelectorAll('input[type="password"]').forEach(function (el) {
                             el.value = '';
                         });
+                        return;
+                    }
+
+                    if (form.id === 'bindUserForm' && data.bound_user) {
+                        updateAdminBindUI(data.bound_user);
+                        return;
+                    }
+
+                    if (form.id === 'unbindUserForm') {
+                        clearAdminBindUI();
                         return;
                     }
 

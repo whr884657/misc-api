@@ -83,6 +83,10 @@ class DatabaseMigrator
             self::markApplied('1.0.20');
         }
 
+        if (!in_array('1.8.0', $applied, true) && self::tableColumnExists('admin', 'bound_user_id')) {
+            self::markApplied('1.8.0');
+        }
+
         if (!in_array('1.0.35', $applied, true)) {
             $all = Config::all();
             if (array_key_exists('storage_local_public_slug', $all)) {

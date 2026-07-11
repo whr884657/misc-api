@@ -177,7 +177,7 @@ class Auth
         try {
             $pdo = Database::connect();
             $table = Database::table('admin');
-            $stmt = $pdo->prepare('SELECT `id`, `username`, `email`, `avatar_url`, `created_at` FROM `' . $table . '` WHERE `id` = ? LIMIT 1');
+            $stmt = $pdo->prepare('SELECT `id`, `username`, `email`, `avatar_url`, `bound_user_id`, `created_at` FROM `' . $table . '` WHERE `id` = ? LIMIT 1');
             $stmt->execute(array(self::id()));
             return $stmt->fetch() ?: null;
         } catch (Exception $e) {

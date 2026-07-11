@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.7.1-blue" alt="version">
+  <img src="https://img.shields.io/badge/version-1.8.0-blue" alt="version">
   <img src="https://img.shields.io/badge/License-开源-green" alt="license">
   <a href="https://gitee.com/xunjinlu/misc-api"><img src="https://img.shields.io/badge/Gitee-代码仓库-C71D23?logo=gitee" alt="Gitee"></a>
   <img src="https://img.shields.io/badge/PHP-7.4+-777BB4?logo=php&logoColor=white" alt="PHP">
@@ -81,7 +81,7 @@
 | 日志查询（占位） | `/admin/system/logs.php` | 后续开发 |
 | Redis 管理（占位） | `/admin/system/redis.php` | 后续开发 |
 | 主题设置（占位） | `/admin/system/theme.php` | 后续开发 |
-| 账号设置 | `/admin/account.php` | 修改用户名、邮箱、头像、密码 |
+| 账号设置 | `/admin/account.php` | 修改资料、发布身份绑定用户账号 |
 | 系统设置 | `/admin/settings.php` | 站点信息、注册策略、OAuth、邮箱发信 |
 | 系统升级 | `/admin/upgrade.php` | 手动检测更新、安装更新、查看更新记录 |
 | 关于 | `/admin/about.php` | 系统与环境信息 |
@@ -106,8 +106,8 @@
 
 - **PHP** 7.4 / 8.0 / 8.2（推荐 8.0+）
 - **MySQL** 5.7+ 或 MariaDB 10.3+
-- **PHP 扩展**：pdo、pdo_mysql、mbstring、json、session、curl、openssl、zip
-- **目录权限**：`config/` 可写；安装后自动生成 `config/database.php`
+- **PHP 扩展**：pdo、pdo_mysql、**redis**、mbstring、json、session、curl、openssl、zip
+- **目录权限**：`config/`、`data/` 可写；安装后自动生成 `config/database.php`
 
 ---
 
@@ -216,6 +216,16 @@ location / {
 ---
 
 ## 版本记录
+
+### v1.8.0（2026-07-11）
+
+**类型：** 大版本（安装检测 + 管理员用户绑定）
+
+**变更说明：**
+
+- 安装检测：Redis 扩展必选、config/data 目录可写、MySQL 扩展必选
+- 管理员表新增 `bound_user_id`，账号设置支持绑定用户发布身份
+- 数据库迁移 `1.8.0.sql`
 
 ### v1.7.1（2026-07-11）
 

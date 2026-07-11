@@ -218,24 +218,38 @@ function runEnvironmentCheck()
         'pass'  => $phpOk,
     );
 
-    $extensions = array('pdo', 'pdo_mysql', 'mbstring', 'json', 'session');
+    $extensions = array(
+        array('name' => 'pdo', 'label' => 'PDO', 'required' => true),
+        array('name' => 'pdo_mysql', 'label' => 'PDO MySQL（MySQL 数据库）', 'required' => true),
+        array('name' => 'redis', 'label' => 'Redis（缓存，必选）', 'required' => true),
+        array('name' => 'mbstring', 'label' => 'mbstring', 'required' => true),
+        array('name' => 'json', 'label' => 'json', 'required' => true),
+        array('name' => 'session', 'label' => 'session', 'required' => true),
+        array('name' => 'curl', 'label' => 'curl', 'required' => true),
+        array('name' => 'openssl', 'label' => 'openssl', 'required' => true),
+        array('name' => 'zip', 'label' => 'zip', 'required' => true),
+    );
     foreach ($extensions as $ext) {
-        $loaded = extension_loaded($ext);
+        $loaded = extension_loaded($ext['name']);
         $checks[] = array(
-            'name'  => 'PHP 扩展：' . $ext,
-            'need'  => '已安装',
+            'name'  => 'PHP 扩展：' . $ext['label'],
+            'need'  => '已安装（必选）',
             'value' => $loaded ? '已安装' : '未安装',
             'pass'  => $loaded,
+            'required' => $ext['required'],
         );
     }
 
-    $writableDirs = array('config');
+    $writableDirs = array('config', 'data');
     foreach ($writableDirs as $dir) {
         $path = VS_ROOT . '/' . $dir;
+        if (!is_dir($path)) {
+            @mkdir($path, 0755, true);
+        }
         $writable = is_dir($path) && is_writable($path);
         $checks[] = array(
             'name'  => '目录可写：' . $dir . '/',
-            'need'  => '可写',
+            'need'  => '可写（部署必选）',
             'value' => $writable ? '可写' : '不可写',
             'pass'  => $writable,
         );
@@ -330,7 +344,7 @@ vs_render_head('安装向导 - 第' . $step . '步', array('install.css'));
 
             <?php if ($step === 1): ?>
                 <h2 class="vs-card-title">第一步：环境检测</h2>
-                <p class="vs-card-desc">系统将检测服务器环境是否满足 misc-api 运行要求。</p>
+                <p class="vs-card-desc">系统将检测服务器环境是否满足 misc-api 运行要求。须安装 <strong>MySQL（pdo_mysql）</strong> 与 <strong>Redis</strong> 扩展，且 <code>config/</code>、<code>data/</code> 目录可写。</p>
                 <div class="vs-check-list">
                     <?php foreach ($envChecks as $check): ?>
                         <div class="vs-check-item<?php echo $check['pass'] ? ' is-pass' : ' is-fail'; ?>">

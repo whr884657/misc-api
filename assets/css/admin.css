@@ -1611,6 +1611,58 @@ select.vs-input {
     }
 }
 
+/* ── 管理员发布身份绑定 ── */
+.vs-admin-bind-section {
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid var(--vs-border);
+}
+
+.vs-admin-bind-status {
+    margin-bottom: 16px;
+}
+
+.vs-admin-bind-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 14px 16px;
+    border: 1px solid var(--vs-border);
+    border-radius: 8px;
+    background: var(--vs-content-bg);
+}
+
+.vs-admin-bind-card__info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.vs-admin-bind-card__label {
+    font-size: 12px;
+    color: var(--vs-text-secondary);
+}
+
+.vs-admin-bind-card__value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--vs-text);
+    word-break: break-word;
+}
+
+.vs-admin-bind-empty {
+    margin: 0;
+    font-size: 14px;
+    color: var(--vs-text-secondary);
+}
+
+.vs-admin-bind-form {
+    max-width: 520px;
+}
+
 /* ── 账号设置 · 第三方绑定 ── */
 .vs-oauth-bind-section {
     margin-top: 0;

@@ -10,10 +10,12 @@ CREATE TABLE IF NOT EXISTS `{prefix}admin` (
     `password` char(32) NOT NULL COMMENT 'password hash',
     `email` varchar(100) NOT NULL,
     `avatar_url` varchar(500) NOT NULL DEFAULT '' COMMENT '自定义头像链接',
+    `bound_user_id` int(10) unsigned DEFAULT NULL COMMENT '绑定的用户账号ID（后台发布内容身份）',
     `status` tinyint(1) NOT NULL DEFAULT 1,
     `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_username` (`username`)
+    UNIQUE KEY `uk_username` (`username`),
+    UNIQUE KEY `uk_bound_user_id` (`bound_user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='管理员表';
 
 -- 用户表
